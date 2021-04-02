@@ -1,0 +1,44 @@
+#include <cstdio>
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int levelnum[105], maxlevel = 0;
+
+struct Tnode
+{
+	vector<int> child;
+}T[105];
+
+void DFS(int id, int level)
+{
+	if(T[id].child.size() == 0){
+		if(maxlevel < level) maxlevel = level;
+		levelnum[level]++;
+	}
+	else{
+		for(int i = 0; i < T[id].child.size(); i++)
+			DFS(T[id].child[i], level + 1);
+	}
+}
+
+int main()
+{
+	int n, m, id, k, childid;
+	scanf("%d %d", &n, &m);
+	for(int i = 0; i < m; i++){
+		scanf("%d %d", &id, &k);
+		for(int j = 0; j < k; j++){
+			scanf("%d", &childid);
+			T[id].child.push_back(childid);
+		}
+	}
+	DFS(1, 0);
+    printf("%d", levelnum[0]);
+	for(int i = 1; i <= maxlevel; i++)
+		printf(" %d", levelnum[i]);
+	scanf("%d", &n);
+	return 0;
+}

@@ -1,0 +1,63 @@
+#include <cstdio>
+#include <iostream>
+#include <string>
+
+using namespace std;
+const int inf = 99999999;
+
+int g[500][500], rnum[500], minpath[500], w[500], snum[500];
+bool visited[500] = {};
+
+int main()
+{
+	int n, m, c1, c2, a, b, c;
+	scanf("%d %d %d %d", &n, &m, &c1, &c2);
+	for(int i = 0; i < n; i++){
+		scanf("%d", &rnum[i]);
+		for(int j = 0; j < n; j++)
+			g[i][j] = inf;
+	}
+	for(int i = 0; i < m; i++){
+		scanf("%d %d %d", &a, &b, &c);
+		g[a][b] = g[b][a] = c;
+	}
+    //初始化
+	fill(minpath, minpath + n, inf);
+	fill(snum, snum + n, 0);
+	fill(w, w + n, 0);
+	snum[c1] = 1;
+	minpath[c1] = 0;
+	w[c1] = rnum[c1];
+	for(int i = 0; i < n; i++){//dijkstra
+		//找到起始点c1到目前能去的未访问过的最近的结点v
+		int v, min = inf;
+		for(int j = 0; j < n; j++){
+			if(visited[j] == false && minpath[j] < min){
+				v = j;
+				min = minpath[j];
+			}
+		}
+		if (v == c2){
+			printf("%d %d", snum[v], w[v]);
+			break;
+		}
+		//设置v被访问过
+		visited[v] = true;
+		//修改能去v以后，对其他结点的影响
+		for(int j = 0; j < n; j++){
+			if(visited[j] == false && minpath[v] + g[v][j] < minpath[j]){
+				minpath[j] = minpath[v] + g[v][j];
+				w[j] = w[v] + rnum[j];
+				snum[j] = snum[v];
+			}
+			else if(visited[j] == false && minpath[v] + g[v][j] == minpath[j]){
+				snum[j] += snum[v];
+				if(w[j] < w[v] + rnum[j]){
+					w[j] = w[v] + rnum[j];
+				}
+			}
+		}
+	}
+	scanf("%d", &n);
+	return 0;
+}

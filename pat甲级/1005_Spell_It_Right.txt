@@ -1,0 +1,30 @@
+#include <cstdio>
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int main()
+{
+	string str, s1;
+	cin >> str;
+	int len = str.length(), sum = 0, num = 0;
+	for(int i = 0; i < len; i++)
+		sum += str[i] - '0';
+	string s[10] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+	if(sum == 0) printf("zero");
+	else{
+		int temp = sum;
+		while(temp != 0){
+			num++;
+			temp /= 10;
+		}
+		s1 = to_string(sum);
+		for(int i = 0; i < num; i++){
+			if(i != num - 1) cout << s[s1[i] - '0'] << " ";
+			else cout << s[s1[i] - '0'];
+		}
+	}
+	return 0;
+}

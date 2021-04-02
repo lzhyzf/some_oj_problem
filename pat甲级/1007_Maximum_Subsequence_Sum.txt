@@ -1,0 +1,32 @@
+#include <cstdio>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	vector<int> v(n);
+	int sum = 0, maxsum = -1, first = 0, last = n - 1, newfirst = 0;
+	for(int i = 0; i < n; i++){
+		scanf("%d", &v[i]);
+		sum += v[i];
+		if(sum < 0){
+			sum = 0;
+			newfirst = i + 1;
+		}
+		else if(sum > maxsum){
+			maxsum = sum;
+			first = newfirst;
+			last = i;
+		}
+	}
+	if(maxsum < 0) maxsum = 0;
+	printf("%d %d %d", maxsum, v[first], v[last]);
+	cin >> n;
+	return 0;
+}
