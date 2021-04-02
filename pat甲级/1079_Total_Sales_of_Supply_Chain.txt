@@ -1,0 +1,59 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <vector>
+#include <map>
+#include <set>
+#include <stack>
+#include <string>
+#include <string.h>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+
+using namespace std;
+
+struct TNode
+{
+	vector<int> child;
+	double num;
+	int re, level;//零售数量，是否零售商，层数
+}T[100001], tmp;
+
+int main()
+{
+	int n, temp;
+	double p, r, sum = 0;
+	cin >> n >> p >> r;
+	for(int i = 0; i < n; i++){
+		int m;
+		cin >> m;
+		if(m){
+			for(int j = 0; j < m; j++){
+				cin >> temp;
+				T[i].child.push_back(temp);
+			}
+		}
+		else{
+			cin >> temp;
+			T[i].re = 1;
+			T[i].num = temp;
+		}
+	}
+		T[0].level = 0;
+		queue<TNode> q;
+		q.push(T[0]);
+		while(!q.empty()){//bfs
+			tmp = q.front();
+			q.pop();
+			for(int i = 0; i < tmp.child.size(); i++){
+				T[tmp.child[i]].level = tmp.level + 1;
+				q.push(T[tmp.child[i]]);
+			}
+			if(tmp.re == 1){//如果是零售商
+				sum += tmp.num * p * pow(1 + r / 100, tmp.level);
+			}
+		}
+		printf("%.1lf\n", sum);
+	return 0;
+}

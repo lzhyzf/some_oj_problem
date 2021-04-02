@@ -1,0 +1,32 @@
+#include <cstdio>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cmath>
+#include <stack>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+	int book[257] = {}, flag = 0;
+	string s1, s2;
+	cin >> s1 >> s2;
+	for(int i = 0; i < s1.length(); i++)
+		book[s1[i]]++;
+	for(int i = 0; i < s2.length(); i++){
+		book[s2[i]]--;
+		if(book[s2[i]] < 0) flag = 1;
+	}
+	if(flag){
+		int sum = 0;
+		for(int i = 0; i < 257; i++)
+			if(book[i] < 0) sum -= book[i];
+		printf("No %d", sum);
+	}
+	else printf("Yes %d", s1.length() - s2.length());
+	cin >> s1;
+	return 0;
+}

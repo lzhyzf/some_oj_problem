@@ -1,0 +1,55 @@
+#include <iostream>
+#include <map>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	int left, right, data;
+}temp, tree[100];
+
+int morder[110], cnt = 0;
+
+void mtraversal(int root)
+{
+	if(tree[root].left != -1)
+		mtraversal(tree[root].left);
+	morder[cnt++] = root;
+	if(tree[root].right != -1)
+		mtraversal(tree[root].right);
+}
+
+int main()
+{
+	int n, a[101];
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++)
+		scanf("%d %d", &tree[i].left, &tree[i].right);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &a[i]);
+	sort(a, a + n);
+	mtraversal(0);
+	for(int i = 0; i < n; i++)
+		tree[morder[i]].data = a[i];
+	queue<int> q;
+	q.push(0);
+	cnt = 0;
+	while(!q.empty()){
+		int temp = q.front();
+		q.pop();
+		if(tree[temp].left != -1)
+			q.push(tree[temp].left);
+		if(tree[temp].right != -1)
+			q.push(tree[temp].right);
+		printf("%d", tree[temp].data);
+		cnt++;
+		if(cnt != n) printf(" ");
+	}
+	cin >> n;
+	return 0;
+}

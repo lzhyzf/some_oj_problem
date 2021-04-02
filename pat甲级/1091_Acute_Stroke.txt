@@ -1,0 +1,67 @@
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <stack>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	int x, y, z;
+}p;
+
+int arr[1300][130][70], visited[1300][130][70], n, m, l, t;
+int X[6] = {1, -1, 0, 0, 0, 0};
+int Y[6] = {0, 0, 1, -1, 0, 0};
+int Z[6] = {0, 0, 0, 0, 1, -1};
+
+int bfs(int i, int j, int k)
+{
+	int volume = 1;
+	p.x = i;
+	p.y = j;
+	p.z = k;
+	queue<node> q;
+	q.push(p);
+	visited[i][j][k] = 1;
+	while(!q.empty()){
+		node tmp;
+		p = q.front();
+		q.pop();
+		for(int i = 0; i < 6; i++){
+			tmp.x = p.x + X[i];
+			tmp.y = p.y + Y[i];
+			tmp.z = p.z + Z[i];
+			if(tmp.x >= 0 && tmp.x < m && tmp.y >= 0 && tmp.y < n && tmp.z >= 0 && tmp.z < l){
+				if(visited[tmp.x][tmp.y][tmp.z] == 0 && arr[tmp.x][tmp.y][tmp.z] == 1){
+					visited[tmp.x][tmp.y][tmp.z] = 1;
+					q.push(tmp);
+					volume++;
+				}
+			}
+		}
+	}
+	if(volume >= t) return volume;
+	else return 0;
+}
+
+int main() {
+	int sum = 0;
+	scanf("%d %d %d %d", &m, &n, &l, &t);
+	for(int k = 0; k < l; k++)
+		for(int i = 0; i < m; i++)
+			for(int j = 0; j < n; j++)
+				scanf("%d", &arr[i][j][k]);
+	for(int k = 0; k < l; k++)
+		for(int i = 0; i < m; i++)
+			for(int j = 0; j < n; j++)
+				if(visited[i][j][k] == 0 && arr[i][j][k] == 1)
+					sum += bfs(i, j, k);
+	cout << sum;
+	cin >> n;
+	return 0;
+}

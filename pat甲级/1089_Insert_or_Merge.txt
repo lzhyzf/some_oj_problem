@@ -1,0 +1,53 @@
+#include <cstdio>
+#include <iostream>
+#include <vector>
+#include <stack>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+	int n, a[101], b[101];
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &a[i]);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &b[i]);
+	int k = 0;
+	while(k < n - 1 && b[k] <= b[k+1]) k++;
+	int j = k + 1;
+	for(; j < n && a[j] == b[j]; j++);
+	if(j == n){
+		printf("Insertion Sort\n");
+		int temp = b[k+1], index = 0;
+		while(a[index] < temp && index < k + 1) index++;
+		for(int i = k; i >= index; i--)
+			b[i+1] = b[i];
+		b[index] = temp;
+	}
+	else{
+		printf("Merge Sort\n");
+		int step = 2, flag = 0;
+		for(; step / 2 < n; step *= 2){
+			for(int i = 0; i < n; i++){
+				if(i % step != 0 && b[i] < b[i - 1]){
+					flag = 1;
+					break;
+				}
+			}
+			if(flag == 1) break;
+		}
+		int sec = n / step;
+		for(int i = 0; i < sec; i++)
+			sort(b + i * step, b + (i + 1) * step);
+		sort(b + sec * step, b + n);
+	}
+	for(int i = 0; i < n; i++){
+		printf("%d", b[i]);
+		if(i != n - 1) printf(" ");
+	}
+	cin >> n;
+	return 0;
+
+}

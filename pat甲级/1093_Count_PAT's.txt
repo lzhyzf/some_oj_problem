@@ -1,0 +1,27 @@
+#include <cstdio>
+#include <cstring>
+
+char str[100001];
+int pnum[100001];
+
+int main()
+{
+	int i, len, num = 0;
+	long int count = 0;
+
+	scanf("%s", str);
+	len = strlen(str);
+	for(i= 0; i < len; i++){
+		if(str[i] == 'P') num++;
+		if(str[i] == 'A') pnum[i] = num;
+	}
+	num = 0;
+	for(i= len - 1; i >= 0; i--){
+		if(str[i] == 'T') num++;
+		if(str[i] == 'A') count += num * pnum[i];
+		if(count >= 1000000007) count = count % 1000000007;
+	}
+	printf("%ld", count);
+	//scanf("%d", &count);
+	return 0;
+}

@@ -1,0 +1,74 @@
+#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct stu
+{
+	int ge, gi, total, id;
+	int aspiration[100];
+}p[40001];
+
+int cmp(stu a, stu b)
+{
+	if(a.total != b.total) return a.total > b.total;
+	else return a.ge > b.ge;
+}
+
+int cmp1(int a, int b)
+{
+	return p[a].id < p[b].id;
+}
+
+int main()
+{
+	int n, m, k;
+
+	scanf("%d %d %d", &n, &m, &k);
+	vector<int> school(m);
+	for(int i = 0; i < m; i++)
+		scanf("%d", &school[i]);
+	for(int i = 0; i < n; i++){
+		scanf("%d %d", &p[i].ge, &p[i].gi);
+		p[i].total = p[i].ge + p[i].gi;
+		p[i].id = i;
+		int choice;
+		for(int j = 0; j < k; j++)
+			scanf("%d", &p[i].aspiration[j]);
+	}
+	sort(p, p + n, cmp);
+	vector<vector<int> > v(m);
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < k; j++){
+			int tmp = p[i].aspiration[j];
+			if(v[tmp].size() < school[tmp]){
+				v[tmp].push_back(i);
+				break;
+			}
+			else{
+				if(p[i].total == p[*(v[tmp].end() - 1)].total && p[i].ge == p[*(v[tmp].end() - 1)].ge){
+					v[tmp].push_back(i);
+					break;
+				}
+			}
+		}
+	}
+	for(int i = 0; i < m; i++){
+		int num = v[i].size();
+		sort(v[i].begin(), v[i].end(), cmp1);
+		for(int j = 0; j < num; j++){
+			printf("%d", p[v[i][j]].id);
+			if(j != num - 1) printf(" ");
+		}
+		printf("\n");
+	}
+	cin >> n;
+	return 0;
+}

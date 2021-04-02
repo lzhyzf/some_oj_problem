@@ -1,0 +1,76 @@
+#include <iostream>
+#include <map>
+#include <queue>
+#include <cstring>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	char license[10];
+	int time, flag;
+};
+
+int cmp1(node a, node b)
+{//依照先车牌，后停车时间排序
+	if(strcmp(a.license, b.license) == 0)
+		return a.time < b.time;
+	else return strcmp(a.license, b.license) > 0;
+}
+
+int cmp2(node a, node b)
+{//依据停车时间排序
+	return a.time < b.time;
+}
+
+int main()
+{
+	int n, k, sum = 0, maxtime = 0, cnt[80001], h, m, t;//cnt数组用来存每一个正确记录后校园中停了多少车
+	scanf("%d %d", &n, &k);
+	vector<node> rec(n), car;
+	for(int i = 0; i < n; i++){//将所有记录存入rec中
+		char tempflag[5];
+		scanf("%s %d:%d:%d %s", rec[i].license, &h, &m, &t, tempflag);
+		rec[i].time = 3600 * h + 60 * m + t;
+		rec[i].flag = (strcmp(tempflag, "in") ? -1 : 1);
+	}
+	sort(rec.begin(), rec.end(), cmp1);
+	map<string, int> mapp;
+	for(int i = 0; i < n - 1; i++){//筛选出符合条件记录存入car数组中,并找出最长停车时间
+		if(strcmp(rec[i].license, rec[i+1].license) == 0 && rec[i].flag == 1 && rec[i+1].flag == -1){
+			car.push_back(rec[i]);
+			car.push_back(rec[i+1]);
+			mapp[rec[i].license] += rec[i+1].time - rec[i].time;
+			if(maxtime < mapp[rec[i].license]) maxtime = mapp[rec[i].license];
+		}
+	}
+	sort(car.begin(), car.end(), cmp2);
+	for(int i = 0; i < car.size(); i++){//存每一个正确记录后校园中停了多少车
+		if(i == 0) cnt[i] = car[i].flag;
+		else cnt[i] = cnt[i-1] + car[i].flag;
+	}
+	int next = 0;
+	for(int i = 0; i < k; i++){
+		scanf("%d:%d:%d", &h, &m, &t);
+		int temptime = 3600 * h + 60 * m + t;
+		for(int j = next; j < car.size(); j++){
+			if(car[j].time > temptime){
+				printf("%d\n", cnt[j-1]);
+				break;
+			}
+			else if(j == car.size() - 1)
+				printf("%d\n", cnt[j]);
+		next = j;
+		}
+	}
+	for(map<string, int>::iterator it = mapp.begin(); it != mapp.end(); it++){
+		if(it->second == maxtime) cout << it->first << ' ';
+	}
+	printf("%02d:%02d:%02d", maxtime/3600, maxtime%3600/60, maxtime%60);
+	cin >> n;
+	return 0;
+}

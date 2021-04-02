@@ -1,0 +1,67 @@
+#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int fullg[6] = {};
+
+struct person
+{
+	int id, pro[6], totalg, isshown, perfectnum;
+}p[10005];
+
+int cmp(person a, person b)
+{
+	if(a.totalg != b.totalg) return a.totalg > b.totalg;
+	else if(a.perfectnum != b.perfectnum) return a.perfectnum > b.perfectnum;
+	else return a.id < b.id;
+}
+
+int main()
+{
+	int n, k, m;
+	cin >> n >> k >> m;
+	for(int i = 1; i <= k; i++)
+		scanf("%d", &fullg[i]);
+	int id, pindex, g;
+	for(int i = 0; i < m; i++){
+		scanf("%d %d %d", &id, &pindex, &g);
+		if(g + 100 > p[id].pro[pindex])
+			p[id].pro[pindex] = g + 100;
+	}
+	for(int i = 1; i <= n; i++){
+		p[i].id = i;
+		for(int j = 1; j <= k; j++){
+			if(p[i].pro[j] >= 100){
+				p[i].totalg += p[i].pro[j] - 100;
+				p[i].isshown = 1;
+				if(p[i].pro[j] == 100 + fullg[j])
+					p[i].perfectnum++;
+			}
+		}
+	}
+	sort(p + 1, p + n + 1, cmp);
+	int rank = 1;
+	for(int i = 1; i <= n; i++){
+		if(p[i].isshown == 1){
+			if(p[i].totalg != p[i-1].totalg) rank = i;
+			printf("%d %05d %d", rank, p[i].id, p[i].totalg);
+			for(int j = 1; j <= k; j++){
+				printf(" ");
+				if(p[i].pro[j] == 0) printf("-");
+				else if(p[i].pro[j] == 99) printf("0");
+				else printf("%d", p[i].pro[j] - 100);
+			}
+			printf("\n");
+		}
+	}
+	cin >> n;
+	return 0;
+}

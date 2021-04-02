@@ -1,0 +1,67 @@
+#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int primetable[30000];
+
+bool isprime(int x)
+{
+	if(x <= 1) return false;
+	else if(x == 2 || x == 3) return true;
+	for(int i = 2; i <= sqrt(x); i++)
+		if(x % i == 0) return false;
+	return true;
+}
+
+void findprime()
+{
+	int num = 0;
+	for(int i = 2; i <= 30000; i++)
+		if(isprime(i)) primetable[num++] = i;
+}
+
+int main()
+{
+	int ms, n, x;
+	findprime();//建立素数表
+	cin >> ms >> n;
+	for(int i = 0; ;i++){
+		if(primetable[i] >= ms){
+			ms = primetable[i];
+			break;
+		}
+	}
+	bool book[30000] = {};
+	for(int i = 0; i < n; i++){
+		scanf("%d", &x);
+		int key = x % ms;
+		if(book[key] == false){
+			printf("%d", key);
+			book[key] = true;
+		}
+		else{
+			int flag = 0;
+			for(int step = 1; step < ms; step++){
+				key = (x + step * step) % ms;
+				if(book[key] == false){
+					printf("%d", key);
+					book[key] = true;
+					flag =1;
+					break;
+				}
+			}
+			if(!flag) printf("-");
+		}
+		if(i != n - 1) printf(" ");
+	}
+	cin >> n;
+	return 0;
+}

@@ -1,0 +1,52 @@
+#include <iostream>
+#include <map>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+string s;
+string a[13] = {"tret", "jan", "feb", "mar", "apr", "may", "jun", "jly", "aug", "sep", "oct", "nov", "dec"};
+    string b[13] = {"####", "tam", "hel", "maa", "huh", "tou", "kes", "hei", "elo", "syy", "lok", "mer", "jou"};
+
+void fun1()
+{
+	int len = s.length(), num = 0;
+	for(int i = 0; i < s.length(); i++)
+		num = num * 10 + s[i] - '0';
+	if(num / 13) cout << b[num / 13];
+	if(num / 13 && num % 13) cout << ' ';
+	if(num % 13 || num == 0) cout << a[num % 13];
+};
+
+void fun2()
+{
+	int num = 0;
+	int len = s.length();
+	string s1 = s.substr(0, 3), s2;
+	if(len > 4)
+		s2 = s.substr(4, 3);
+	for(int i = 0; i <= 12; i++){
+		if(s1 == a[i] || s2 == a[i]) num += i;
+		if(s1 == b[i]) num += 13 * i;
+	}
+	printf("%d", num);
+};
+
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	getchar();
+	for(int i = 0; i < n; i++){
+		getline(cin, s);
+		if(s[0] >= '0' && s[0] <= '9')
+			fun1();
+		else fun2();
+		cout << endl;
+	}
+	cin >> n;
+	return 0;
+}

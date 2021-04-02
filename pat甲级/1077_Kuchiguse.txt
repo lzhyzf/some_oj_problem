@@ -1,0 +1,46 @@
+#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	string s[105];
+	char ans[270];
+	int slen[105] = {}, n;
+	int minlen = 9999;
+	cin >> n;
+	getchar();
+	for(int i = 0; i < n; i++){
+		getline(cin, s[i]);
+		slen[i] = s[i].length();
+		if(s[i].length() < minlen) minlen = s[i].length();
+	}
+	if(minlen == 0) printf("nai");
+	int suffix = 0;
+	for(int i = 0; i < minlen; i++){
+		int flag = 0;
+		char c = s[0][slen[0] - i - 1];
+		for(int j = 1; j < n; j++)
+			if(s[j][slen[j] - 1 - i] != c)
+				flag = 1;
+		if(flag)
+			break;
+		else
+			ans[suffix++] = c;
+	}
+	if(suffix == 0) printf("nai");
+	else{
+		for(int i = suffix - 1; i >= 0; i--)
+			printf("%c", ans[i]);
+	}
+	cin >> s[1];
+	return 0;
+}

@@ -1,0 +1,43 @@
+#include <cstdio>
+#include <stdlib.h>
+#include <algorithm>
+
+using namespace std;
+const int maxn = 100000;
+
+struct Node
+{
+	int address, data, next, num;
+}a[maxn];
+
+int cmp(Node a, Node b){
+	return a.num < b.num;
+}
+
+int main()
+{
+	int i, head, n, temp, Hash[10005] = {}, p, cnt, cnt1 = 0;
+
+	for(i = 0; i < maxn; i++)
+		a[i].num = 2 * maxn;
+	scanf("%d %d", &head, &n);
+	for(i = 0; i < n; i++){
+		scanf("%d", &temp);
+		scanf("%d %d", &a[temp].data, &a[temp].next);
+		a[temp].address = temp;
+	}
+	for(p = head, cnt = 0; p != -1; p = a[p].next, cnt++){
+		if(!Hash[abs(a[p].data)]){
+			cnt1++;
+			Hash[abs(a[p].data)] = 1;
+			a[p].num = cnt;
+		}
+		else a[p].num = maxn + cnt;
+	}
+	sort(a, a + maxn, cmp);
+	for(i = 0; i < cnt; i++)
+		if(i != cnt1 - 1 && i != cnt - 1) printf("%05d %d %05d\n", a[i].address, a[i].data, a[i + 1].address);
+	    else printf("%05d %d -1\n", a[i].address, a[i].data);
+	scanf("%d", &n);
+	return 0;
+}

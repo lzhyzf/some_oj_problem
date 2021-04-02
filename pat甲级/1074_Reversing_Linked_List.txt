@@ -1,0 +1,68 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <algorithm>
+
+using namespace std;
+
+struct Node
+{
+	int address, data, next;
+	bool flag;
+}a[100000];
+
+int Reverse(int head, int k)
+{//将以head为首结点的k个结点逆转并返回尾部结点地址
+	int pre, p, rear;
+
+	pre = head; p = a[pre].next; rear = a[p].next;
+	for(int i = 0; i < k - 1; i++){
+		a[p].next = a[pre].address;
+		pre = p;
+		p = rear;
+		if(rear != -1) rear = a[rear].next;
+	}
+	return pre;
+}
+
+int main()
+{
+	int head, n, cnt = 0, k, i, temp, p, reversehead, tail, nhead;
+
+	scanf("%d %d %d", &head, &n, &k);
+	for(i = 0; i < n; i++){//读入n个结点
+		scanf("%d", &temp);
+		a[temp].address = temp;
+		scanf("%d %d", &a[temp].data, &a[temp].next);
+	}
+	for(p = head; p != -1; p = a[p].next){//找到在链表上的结点并记录共有多少节点
+		a[p].flag = true;
+		cnt++;
+	}
+	n = cnt / k;//计算需要逆转几段
+	if(n == 0 || k == 1){//逆转的链表总结点不到k个则不逆转或者本不逆转链表
+		for(p = head, i = 0; i < cnt - 1; p = a[p].next, i++)
+			printf("%05d %d %05d\n", a[p].address, a[p].data, a[p].next);
+		printf("%05d %d -1\n", a[p].address, a[p].data);
+	}
+	else{
+		reversehead = head;//reversehead用来保存每次要逆转链表的那一段的第一个结点地址
+		for(i = 0, p = head; i < k - 1; i++)
+			p = a[p].next;
+		head = p;//找到逆转后链表的首个结点
+		for(int j = 0; j < n; j++){//逆转cnt次，每次逆转k个结点
+			for(i = 0, p = reversehead; i < k; i++)//找到下一段链表的头，也就是逆转的这段链表最后要接上的位置
+				p = a[p].next;
+		    nhead = Reverse(reversehead, k);
+			if(j != 0) a[tail].next = nhead;
+			a[reversehead].next = p;
+			tail = reversehead;
+			reversehead = p;
+		}
+		for(p = head, i = 0; i < cnt - 1; p = a[p].next, i++)
+			printf("%05d %d %05d\n", a[p].address, a[p].data, a[p].next);
+		printf("%05d %d -1\n", a[p].address, a[p].data);
+	}
+	scanf("%d", &n);
+	return 0;	
+}

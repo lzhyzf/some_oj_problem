@@ -1,0 +1,254 @@
+/*#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+const int inf = 99999999;
+int g[1020][1020], mind[1020];
+bool visited[1020];
+int n, m, k, maxdis, c1, c2, temp, maxtotaldis = 0, dis = 0, maxmindis = 0;
+
+struct node
+{
+	int cityindex;
+	float totaldis;
+}suitedgas;
+
+vector<node> ans;
+
+int findmin()
+{
+	int min = inf, minv = 1;
+	for(int i = 1; i <= n + m; i++){
+		if(!visited[i] && mind[i] < min){
+			min = mind[i];
+			minv = i;
+		}
+	}
+	return minv;
+}
+
+float gettotoldis()
+{
+	int sum = 0;
+	for(int i = 1; i <= n; i++)
+		sum += mind[i];
+	return (float)sum;
+}
+
+void dfs(int v)
+{
+	int min = inf;
+	fill(visited, visited+1020, false);
+	fill(mind, mind+1020, inf);
+	mind[v] = 0;
+	for(int i = 1; i <= n+m; i++){
+		int v1 = findmin();
+		if(v1 <= n && mind[v1] > maxdis) return;
+		if(v1 <= n && mind[v1] < min) min = mind[v1];
+		visited[v1] = true;
+		for(int j = 1; j <= n+m; j++){
+			if(!visited[j] && mind[v1] + g[v1][j] < mind[j])
+				mind[j] = mind[v1] + g[v1][j];
+		}
+	}
+	if(min > maxmindis){
+		ans.clear();
+		suitedgas.cityindex = v;
+		suitedgas.totaldis = gettotoldis();
+		ans.push_back(suitedgas);
+		maxmindis = min;
+	}
+	else if(min == maxmindis){
+		float totoaldis = gettotoldis();
+		if(totoaldis / n < ans[0].totaldis / n){
+			ans[0].cityindex = v;
+			ans[0].totaldis = totoaldis;
+		}
+	}
+}
+
+int main()
+{
+	string s;
+	scanf("%d %d %d %d", &n, &m, &k, &maxdis);
+	fill(g[0], g[0]+1020*1020, inf);
+	for(int i = 0; i < k; i++){//读入图
+		cin >> s;
+		if(s[0] == 'G') c1 = s[1] - '0' + n;
+		else c1 = stoi(s);
+		cin >> s;
+		if(s[0] == 'G') c2 = s[1] - '0' + n;
+		else c2 = stoi(s);
+		scanf("%d", &temp);
+		g[c1][c2] = g[c2][c1] = temp;
+	}
+	for(int i = 1; i <= m; i++)
+		dfs(i+n);
+	if(ans.size()) printf("G%d\n%.1f %.1f", ans[0].cityindex - n, (float)maxmindis, ans[0].totaldis / n);
+	else printf("No Solution");
+	scanf("%d", &n);
+	return 0;
+}*/
+
+
+#include <iostream>
+
+#include <algorithm>
+
+#include <string>
+
+using namespace std;
+
+const int inf = 999999999;
+
+int n, m, k, ds, station;
+
+int e[1020][1020], dis[1020];
+
+bool visit[1020];
+
+int main() {
+
+    fill(e[0], e[0] + 1020 * 1020, inf);
+
+    fill(dis, dis + 1020, inf);
+
+    scanf("%d%d%d%d", &n, &m, &k, &ds);
+
+    for(int i = 0; i < k; i++) {
+
+        int tempdis;
+
+        string s, t;
+
+        cin >> s >> t >> tempdis;
+
+        int a, b;
+
+        if(s[0] == 'G') {
+
+            s = s.substr(1);
+
+            a = n + stoi(s);
+
+        } else {
+
+            a = stoi(s);
+
+        }
+
+        if(t[0] == 'G') {
+
+            t = t.substr(1);
+
+            b = n + stoi(t);
+
+        } else {
+
+            b = stoi(t);
+
+        }
+
+        e[a][b] = e[b][a] = tempdis;
+
+    }
+
+    int ansid = -1;
+
+    double ansdis = -1, ansaver = inf;
+
+    for(int index = n + 1; index <= n + m; index++) {
+
+        double mindis = inf, aver = 0;
+
+        fill(dis, dis + 1020, inf);
+
+        fill(visit, visit + 1020, false);
+
+        dis[index] = 0;
+
+        for(int i = 0; i < n + m; i++) {
+
+            int u = -1, minn = inf;
+
+            for(int j = 1; j <= n + m; j++) {
+
+                if(visit[j] == false && dis[j] < minn) {
+
+                    u = j;
+
+                    minn = dis[j];
+
+                }
+
+            }
+
+            if(u == -1) break;
+
+            visit[u] = true;
+
+            for(int v = 1; v <= n + m; v++) {
+
+                if(visit[v] == false && dis[v] > dis[u] + e[u][v])
+
+                    dis[v] = dis[u] + e[u][v];
+
+            }
+
+        }
+
+        for(int i = 1; i <= n; i++) {
+
+            if(dis[i] > ds) {
+
+                mindis = -1;
+
+                break;
+
+            }
+
+            if(dis[i] < mindis) mindis = dis[i];
+
+            aver += 1.0 * dis[i];
+
+        }
+
+        if(mindis == -1) continue;
+
+        aver = aver / n;
+
+        if(mindis > ansdis) {
+
+            ansid = index;
+
+            ansdis = mindis;
+
+            ansaver = aver;
+
+        } else if(mindis == ansdis && aver < ansaver) {
+
+            ansid = index;
+
+            ansaver = aver;
+
+        }
+
+    }
+
+    if(ansid == -1)
+
+        printf("No Solution");
+
+    else
+
+        printf("G%d\n%.1f %.1f", ansid - n, ansdis, ansaver);
+
+    return 0;
+
+}
