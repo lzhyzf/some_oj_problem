@@ -1,0 +1,70 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct mouse
+{
+	int weight, rank, order, index;//order是初始位置序列下标，index是原始的第几个人
+}m;
+
+int cmp(mouse a, mouse b)
+{
+	return a.index < b.index;
+}
+
+int main()
+{
+	int n, g;
+	cin >> n >> g;
+	vector<int> w(n);
+	vector<mouse> v(n + 1);
+	queue<mouse> q;
+	for(int i = 0; i < n; i++)
+		scanf("%d", &w[i]);
+	for(int i = 1; i <= n; i++){
+		int temp;
+		scanf("%d", &temp);
+		v[i].index = temp;
+		v[i].order = i;
+		v[i].weight = w[temp];
+		q.push(v[i]);
+	}
+	while(!q.empty()){
+		int size = q.size();
+		if(size == 1){
+			v[q.front().order].rank = 1;
+			break;
+		}
+		int groupnum = (size % g) == 0 ? size / g : size / g + 1;
+		int cnt = 0, max = -1;
+		mouse maxmouse;
+		for(int i = 0; i < size; i++){
+			mouse temp = q.front();//从队首取老鼠
+			q.pop();
+			cnt++;
+			v[temp.order].rank = groupnum + 1;
+			if(temp.weight > max){
+				max = temp.weight;
+				maxmouse = temp;
+			}
+			if(cnt == g || i == size - 1){
+				q.push(maxmouse);
+				cnt = 0;
+				max = -1;
+			}
+		}
+	}
+	sort(v.begin() + 1, v.end(), cmp);
+	for(int i = 1; i <= n; i++){
+		printf("%d", v[i].rank);
+		if(i != n) printf(" ");
+	}
+	cin >> n;
+	return 0;
+}

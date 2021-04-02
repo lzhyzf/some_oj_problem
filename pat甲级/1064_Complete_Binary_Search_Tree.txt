@@ -1,0 +1,114 @@
+/*#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int tmp[1005] = {};
+
+typedef struct TNode
+{
+	int key;
+	TNode *left, *right;
+}*Tree;
+
+Tree createtree(int left, int right)
+{//求有n个结点的完全二叉树根结点下标并将该值放入树中对应结点
+	if(left <= right){
+		int num = right - left + 1;
+		int level = log(num + 1) / log(2);
+		int leafnum = num - pow(2, level) + 1;
+		int leftnum = min(pow(2, level - 1) - 1 + leafnum, pow(2, level) - 1);
+		Tree root = (Tree)malloc(sizeof(TNode));
+		root->key = tmp[left + leftnum];
+		root->left = createtree(left, left + leftnum - 1);
+		root->right = createtree(left + leftnum + 1, right);
+		return root;
+	}
+	else return NULL;
+}
+
+int main()
+{
+	int n;
+	cin >> n;
+	for(int i = 1; i <= n; i++)
+		scanf("%d", &tmp[i]);
+	sort(tmp + 1, tmp + n + 1);
+	Tree T = createtree(1, n);
+	queue<Tree> q;
+	q.push(T);
+	int num = 0;
+	while(!q.empty()){
+		Tree t = q.front();
+		printf("%d", t->key);
+		num++;
+		if(num != n) printf(" ");
+		q.pop();
+		if(t->left) q.push(t->left);
+		if(t->right) q.push(t->right);
+	}
+	cin >> n;
+	return 0;
+}*/
+
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> v, ans;
+int n;
+
+int sublefttreenum(int num)
+{
+	if(num == 1) return 0;
+	else if(num == 1 || num == 2) return 1;
+	else{
+		int level = ceil(log(num+1) / log(2)), lfront, leftnum;
+		leftnum = lfront = pow(2, level - 2) - 1;//左子树除了最后一层又多少个结点
+		if(num - 2 * lfront - 1 < pow(2, level - 1) / 2)//判断最后一层的结点有没有超过一半
+			leftnum += num - 2 * lfront - 1;//没超过一半则加上全部最后一层
+		else leftnum += pow(2, level - 1) / 2;//超过一半就加上一半
+		return leftnum;
+	}
+}
+
+void level(int index, int num, int left, int right)
+{//index是完全二叉树的下标，num是当前完全二叉树有多少结点，left和right是这些结点在v数组中的下标
+	if(index <= n){
+		int leftnum = sublefttreenum(num);
+		ans[index] = v[left+leftnum];
+		level(2*index, leftnum, left, left + leftnum - 1);
+		level(2*index+1, num-1-leftnum, left + leftnum + 1, right);
+	}
+}
+
+int main()
+{
+	scanf("%d", &n);
+	v.resize(n+1);
+	ans.resize(n+1);
+	for(int i = 1; i <= n; i++)
+		scanf("%d", &v[i]);
+	sort(v.begin()+1, v.end());
+	level(1, n, 1, n);
+	for(int i = 1; i <= n; i++){
+		if(i == 1) printf("%d", ans[i]);
+		else printf(" %d", ans[i]);
+	}
+	scanf("%d", &n);
+	return 0;
+}

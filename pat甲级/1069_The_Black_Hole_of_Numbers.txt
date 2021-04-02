@@ -1,0 +1,30 @@
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	int b[4], a, rem;
+	
+	scanf("%d", &a);
+	for(int i = 3; i >= 0; i--){
+		b[i] = a % 10;
+		a /= 10;
+	}
+	if(b[0] == b[1] && b[1] == b[2] && b[2] == b[3])
+		printf("%d%d%d%d - %d%d%d%d = 0000\n", b[0], b[1], b[2], b[3], b[0], b[1], b[2], b[3]);
+	else{
+		do{
+			sort(b, b+4);
+			rem = 1000*b[3] + 100*b[2] + 10*b[1] + b[0]- (1000*b[0] + 100*b[1] + 10*b[2] + b[3]);
+			printf("%d%d%d%d - %d%d%d%d = %04d\n", b[3], b[2], b[1], b[0], b[0], b[1], b[2], b[3], rem);
+			a = rem;
+			for(int i = 3; i >= 0; i--){
+				b[i] = a % 10;
+				a /= 10;
+			}
+		}while(rem != 6174);
+	}
+	return 0;	
+}

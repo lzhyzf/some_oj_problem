@@ -1,0 +1,46 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+int m, n, k;
+vector<int> v(1005);
+stack<int> s;
+
+string ispossible()
+{
+	int present = 1;//present表示下一个将要进栈的元素
+	while(!s.empty()) s.pop();
+	for(int i = 1; i <= n; i++){
+		if(v[i] >= present){
+			while(present <= v[i]){
+				s.push(present);
+				present++;
+				if(s.size() > m) return "NO";
+			}
+			s.pop();
+		}
+		else{
+			if(s.top() != v[i]) return "NO";
+			else s.pop();
+		}
+	}
+	return "YES";
+}
+
+int main()
+{
+	scanf("%d %d %d", &m, &n, &k);
+	for(int i = 0; i < k; i++){
+		for(int j = 1; j <= n; j++)
+			scanf("%d", &v[j]);
+		cout << ispossible() << endl;
+	}
+	scanf("%d", &n);
+	return 0;
+}

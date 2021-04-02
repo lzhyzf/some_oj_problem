@@ -1,0 +1,47 @@
+#include <iostream>
+#include <string.h>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct person
+{
+	char name[10];
+	int age, money;
+}p[100005];
+
+int cmp(person a, person b)
+{
+	if(a.age == b.age && a.money == b.money)
+		return strcmp(a.name, b.name) < 0;
+	else if(a.money == b.money) return a.age < b.age;
+	return a.money > b.money;
+}
+
+int main()
+{
+	int n, k, m, amin, amax;
+	scanf("%d %d", &n, &k);
+	for(int i = 0; i < n; i++)//读入n个人信息
+		scanf("%s %d %d", p[i].name, &p[i].age, &p[i].money);
+	sort(p, p + n, cmp);
+	for(int i = 1; i <= k; i++){
+		printf("Case #%d:\n", i);
+		scanf("%d %d %d", &m, &amin, &amax);
+		int cnt = 0;
+		for(int i = 0; i < n; i++){
+			if(m == cnt) break;
+			if(p[i].age >= amin && p[i].age <= amax){
+				printf("%s %d %d\n",p[i].name, p[i].age, p[i].money);
+				cnt++;
+			}
+		}
+		if(cnt == 0) printf("None\n");
+	}
+	cin >> n;
+	return 0;
+}

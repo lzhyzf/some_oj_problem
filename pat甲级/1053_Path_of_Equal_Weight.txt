@@ -1,0 +1,132 @@
+/*#include <cstdio>
+#include <stdlib.h>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+const int maxn = 100;
+int path[maxn] = {};//记录路径
+
+struct TNode
+{//二叉树结点定义
+	int weight;
+	vector<int> child;
+}T[maxn];
+
+int cmp(int a, int b)
+{//权重大的在前
+	return T[a].weight > T[b].weight;
+}
+
+void preorder(int root, int s, int sum, int num)
+{//树的先根遍历
+	int temp = T[root].weight;
+	if(sum + temp > s) return;//剪枝：如果加上当前结点权重和已经超过s，贼没有必要遍历该节点以下的结点
+	else if(sum + temp == s){//如果加上当前结点权重等于s
+		if(T[root].child.size() > 0) return;//减枝：当前结点不是叶节点
+		else {//当前结点是叶结点，则输出
+			for(int i = 0; i < num; i++)
+				printf("%d ", T[path[i]].weight);
+			printf("%d\n", temp);
+			return;
+		}
+	}
+	else {//加上当前结点权重和已小于s，则记录路径
+		path[num] = root;
+		for(int i = 0; i < T[root].child.size(); i++)
+			preorder(T[root].child[i], s, sum + temp, num + 1);
+	}
+}
+
+int main()
+{
+	int n, m, s, temp, num, cld;
+
+	scanf("%d %d %d", &n, &m, &s);//输入n个结点权重
+	for(int i = 0; i < n; i++)
+		scanf("%d", &T[i].weight);
+	for(int i = 0; i < m; i++){//读入m个非叶结点孩子信息,并按照权重排序
+		scanf("%d %d", &temp, &num);
+		for(int j = 0; j < num; j++){
+			scanf("%d", &cld);
+			T[temp].child.push_back(cld);
+		}
+		sort(T[temp].child.begin(), T[temp].child.end(), cmp);
+	}
+	preorder(0, s, 0, 0);
+	scanf("%d", &n);
+	return 0;
+}
+*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> temppath;
+vector<vector<int> > path;
+int n, m, s;
+
+struct tnode
+{
+	int weight;
+	vector<int> child;
+}tree[105];
+
+void dfs(int index, int sumweight)
+{
+	temppath.push_back(tree[index].weight);
+	if(tree[index].child.size() == 0 && sumweight + tree[index].weight == s)
+		path.push_back(temppath);
+	else if(tree[index].child.size() != 0){
+		for(int i = 0; i < tree[index].child.size(); i++)
+			dfs(tree[index].child[i], sumweight+tree[index].weight);
+	}
+	temppath.pop_back();
+}
+
+bool compare(int a, int b)
+{//返回true说明a比b大
+	for(int i = 0; i < path[a].size() && i < path[b].size(); i++){
+		if(path[a][i] > path[b][i]) return true;
+		else if(path[a][i] < path[b][i]) return false;
+	}
+	return true;
+}
+
+int main()
+{
+	scanf("%d %d %d", &n, &m, &s);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &tree[i].weight);
+	int childnum, index, temp;
+	for(int i = 0; i < m; i++){
+		scanf("%d %d", &index, &childnum);
+		for(int j = 0; j < childnum; j++){
+			scanf("%d", &temp);
+			tree[index].child.push_back(temp);
+		}
+	}
+	dfs(0, 0);
+	while(path.size() != 0){//每次找到一个最大的path并输出
+		int max = 0;
+		for(int i = 1; i < path.size(); i++)
+			if(!compare(max, i)) max = i;
+		for(int j = 0; j < path[max].size(); j++){
+			if(j == 0) printf("%d", path[max][j]);
+			else printf(" %d", path[max][j]);
+		}
+		printf("\n");
+		path.erase(path.begin() + max);
+	}
+	scanf("%d", &n);
+	return 0;
+}

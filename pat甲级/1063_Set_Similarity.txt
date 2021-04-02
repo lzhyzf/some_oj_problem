@@ -1,0 +1,36 @@
+#include <cstdio>
+#include <set>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	int n, num, temp, a, b, nc, nt;
+
+	scanf("%d", &n);
+	vector<set<int> > Set(n+1);
+	for(int i = 1; i <= n; i++){
+		scanf("%d", &num); 
+		set<int> s;
+		while(num--){
+			scanf("%d", &temp);
+			s.insert(temp);
+		}
+		Set[i] = s;
+	}
+	scanf("%d", &n);
+	for(int i = 1; i <= n; i++){
+		scanf("%d %d", &a, &b);
+		nt = Set[b].size();
+		nc = 0;
+		for(auto it = Set[a].begin(); it != Set[a].end(); it++){
+			if(Set[b].find(*it) == Set[b].end())
+				nt++;
+			else nc++;
+		}
+		printf("%.1lf%%\n", 100.0 * nc / nt);
+	}
+	return 0;	
+}

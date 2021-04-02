@@ -1,0 +1,54 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> w, dp, ans;//要理解dp中存放的是权重和
+bool choose[10005][105];
+
+int cmp1(int a, int b)
+{
+	return a > b;
+}
+
+int main()
+{
+	int n, m;
+	scanf("%d %d", &n, &m);
+	w.resize(n+1);
+	dp.resize(m+1);
+	for(int i = 1; i <= n; i++)
+		scanf("%d", &w[i]);
+	sort(w.begin()+1, w.end(), cmp1);
+	for(int i = 1; i <= n; i++){
+		for(int j = m; j >= w[i]; j--){
+			if(w[i] + dp[j-w[i]] == j){//如果选了i结点还能走通就一定选i结点，应为越到后面i越小
+				//其实dp[j]只有两种情况，一种是dp[j] == j表示路能走通，一种是dp[j] == 0,表示路走不通
+				dp[j] = j;
+				choose[i][j] = true;//说明我在选第i个硬币，背包容量为j的时候发现了一条捷径路
+			}
+		}
+	}
+	if(dp[m] != m) printf("No Solution\n");
+	else{
+		int v = m, index = n;
+		while(v != 0){
+			if(choose[index][v] == true){
+				ans.push_back(w[index]);
+				v -= w[index];
+			}
+			index--;
+		}
+		for(int i = 0; i < ans.size(); i++){
+		    if(i == 0) printf("%d", ans[i]);
+		    else printf(" %d", ans[i]);
+		}
+	}
+	scanf("%d", &n);
+	return 0;
+}

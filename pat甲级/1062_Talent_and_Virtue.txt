@@ -1,0 +1,54 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct person
+{
+	int id, vir, tal;
+}q;
+
+int cmp(person a, person b)
+{
+	if(a.tal + a.vir != b.tal + b.vir)
+		return a.tal + a.vir > b.tal + b.vir;
+	else if(a.vir != b.vir)
+		return a.vir > b.vir;
+	else return a.id < b.id;
+}
+
+vector<vector<person> > p(4);
+
+int main()
+{
+	int n, low, high, num = 0;
+	cin >> n >> low >> high;
+	for(int i = 0; i < n; i++){
+		scanf("%d %d %d", &q.id, &q.vir, &q.tal);
+		if(q.vir >= low && q.tal >= low){
+			num++;
+			if(q.tal >= high && q.vir >= high)
+				p[0].push_back(q);
+			else if(q.vir >= high)
+				p[1].push_back(q);
+			else if(q.vir >= q.tal)
+				p[2].push_back(q);
+			else
+				p[3].push_back(q);
+		}
+	}
+	for(int i = 0; i < 4; i++)
+		sort(p[i].begin(), p[i].end(), cmp);
+	printf("%d\n", num);
+	for(int i = 0; i < 4; i++){
+		for(int j = 0; j < p[i].size(); j++)
+			printf("%08d %d %d\n", p[i][j].id, p[i][j].vir, p[i][j].tal);
+	}
+	cin >> n;
+	return 0;
+}

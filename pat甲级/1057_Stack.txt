@@ -1,0 +1,134 @@
+/*#include <iostream>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+#define lowbit(i) i&(-i)
+
+using namespace std;
+
+const int maxn = 100005;
+int c[maxn] = {};
+stack<int> st;
+
+void update(int x, int y)
+{//更新树状数组，将与a[x]位置有关的树桩数组内的值+y
+	for(int i = x; i < maxn; i += lowbit(i))
+		c[i] += y;
+}
+
+int getsum(int x)
+{//求a[1] + a[2] + …… a[x] 表示到下标x时已经有几个数字了
+	int sum = 0;
+	for(int i = x; i >= 1; i -= lowbit(i))
+		sum += c[i];
+	return sum;
+}
+
+int peekmedian()
+{
+	int left = 1, right = maxn, mid, k = (st.size() + 1) / 2;
+	while(left < right){
+		mid = (right + left) / 2;
+		if(getsum(mid) >= k)
+			right = mid;
+		else left = mid + 1;
+	}
+	return right;
+}
+
+int main()
+{
+	int n, temp;
+	char s[15];
+	cin >> n;
+	for(int i = 0; i < n; i++){
+		scanf("%s", s);
+		if(s[1] == 'o'){
+			if(st.empty()) printf("Invalid\n");
+			else{
+				temp = st.top();
+				printf("%d\n", temp);
+				update(temp, -1);
+				st.pop();
+			}
+		}
+		else if(s[1] == 'u'){
+			scanf("%d", &temp);
+			update(temp, 1);
+			st.push(temp);
+		}
+		else{
+			if(st.empty()) printf("Invalid\n");
+			else{
+				temp = peekmedian();
+				printf("%d\n", temp);
+			}
+		}
+	}
+	cin >> n;
+	return 0;
+}*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+stack<int> s;
+int block[317], table[100001];//block中存放莫数字到莫数字总数量，table中存放下标数字的数量
+
+int main()
+{//采用分块思想
+	int n, temp;
+	string option;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++){
+		cin >> option;
+		if(option == "Pop"){
+			if(s.empty()) printf("Invalid\n");
+			else{
+				printf("%d\n", s.top());
+				table[s.top()]--;
+				block[s.top()/317]--;
+				s.pop();
+			}
+		}
+		else if(option == "Push"){
+			scanf("%d", &temp);
+			table[temp]++;
+			block[temp/317]++;
+			s.push(temp);
+		}
+		else{
+			if(s.empty()) printf("Invalid\n");
+			else{
+				int middle = (s.size() + 1) / 2, blockcnt = 0, cnt = 0, data = 0;
+				for(int i = 0; i < 317; i++){
+					if(cnt + block[i] >= middle){
+						blockcnt = i;
+						break;
+					}
+					cnt += block[i];
+				}
+				for(int i = blockcnt * 317; i < (blockcnt+1) * 317; i++){
+					if(cnt + table[i] >= middle){
+						data = i;
+						break;
+					}
+					cnt += table[i];
+				}
+				printf("%d\n", data);
+			}
+		}
+	}
+	scanf("%d", &n);
+	return 0;
+}

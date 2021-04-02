@@ -1,0 +1,212 @@
+/*
+#include <iostream>
+
+using namespace std;
+
+struct node {
+
+    int val;
+
+    struct node *left, *right;
+
+};
+
+node *rotateLeft(node *root) {
+
+    node *t = root->right;
+
+    root->right = t->left;
+
+    t->left = root;
+
+    return t;
+
+}
+
+node *rotateRight(node *root) {
+
+    node *t = root->left;
+
+    root->left = t->right;
+
+    t->right = root;
+
+    return t;
+
+}
+
+node *rotateLeftRight(node *root) {
+
+    root->left = rotateLeft(root->left);
+
+    return rotateRight(root);
+
+}
+
+node *rotateRightLeft(node *root) {
+
+    root->right = rotateRight(root->right);
+
+    return rotateLeft(root);
+
+}
+
+int getHeight(node *root) {
+
+    if(root == NULL) return 0;
+
+    return max(getHeight(root->left), getHeight(root->right)) + 1;
+
+}
+
+node *insert(node *root, int val) {
+
+    if(root == NULL) {
+
+        root = new node();
+
+        root->val = val;
+
+        root->left = root->right = NULL;
+
+    } else if(val < root->val) {
+
+        root->left = insert(root->left, val);
+
+        if(getHeight(root->left) - getHeight(root->right) == 2)
+
+            root = val < root->left->val ? rotateRight(root) : rotateLeftRight(root);
+
+    } else {
+
+        root->right = insert(root->right, val);
+
+        if(getHeight(root->left) - getHeight(root->right) == -2)
+
+            root = val > root->right->val ? rotateLeft(root) : rotateRightLeft(root);
+
+    }
+
+    return root;
+
+}
+
+int main() {
+
+    int n, val;
+
+    scanf("%d", &n);
+
+    node *root = NULL;
+
+    for(int i = 0; i < n; i++) {
+
+        scanf("%d", &val);
+
+        root = insert(root, val);
+
+    }
+
+    printf("%d", root->val);
+
+    return 0;
+
+}
+*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <stack>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+typedef struct Tnode
+{
+	int data;
+	Tnode *left, *right;
+}*Tree;
+
+
+int getHeight(Tree T)
+{
+	if(!T) return 0;
+	if(T){
+		return max(getHeight(T->left), getHeight(T->right))+1;
+	}
+}
+
+
+Tree Rrotation(Tree T)
+{//以T为根节点，进行一次右旋
+	Tree temp = T->left->right, root = T->left;
+	root->right = T;
+	T->left = temp;
+	return root;
+}
+
+Tree Lrotation(Tree T)
+{//以T为根节点，进行一次左旋
+	Tree temp = T->right->left, root = T->right;
+	root->left = T;
+	T->right = temp;
+	return root;
+}
+
+Tree LRrotation(Tree T)
+{//以T为根节点，对T的左孩子进行左旋，然后对T进行右旋
+	T->left = Lrotation(T->left);
+	return Rrotation(T);
+}
+
+Tree RLrotation(Tree T)
+{//以T为根节点，对T的右孩子进行右旋，然后对T进行左旋
+	T->right = Rrotation(T->right);
+	return Lrotation(T);
+}
+
+Tree Insert(Tree T, int x)
+{
+	//找到x应该在的位置就插入
+	if(T == NULL){
+		T = (Tree)malloc(sizeof(Tnode));
+		T->left = T->right = NULL;
+		T->data = x;
+	}
+	else{
+		if(x < T->data){
+			T->left = Insert(T->left, x);
+			if(getHeight(T->left) - getHeight(T->right) == 2){
+				if(getHeight(T->left->left) - getHeight(T->left->right) > 0)//插在左孩子的左子树导致不平衡，则右旋
+					T = Rrotation(T);
+				else T = LRrotation(T);
+			}
+		}
+		else{
+			T->right = Insert(T->right, x);
+			if(getHeight(T->left) - getHeight(T->right) == -2){
+				if(getHeight(T->right->left) - getHeight(T->right->right) < 0)//插在左孩子的左子树导致不平衡，则右旋
+					T = Lrotation(T);
+				else T = RLrotation(T);
+			}
+		}
+	}
+	return T;
+}
+
+int main()
+{
+	int n, temp;
+	Tree T = NULL;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++){
+		scanf("%d", &temp);
+		T = Insert(T, temp);
+	}
+	printf("%d", T->data);
+	scanf("%d", &n);
+	return 0;
+}

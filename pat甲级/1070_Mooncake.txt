@@ -1,0 +1,51 @@
+#include <iostream>
+#include <cmath>
+#include <stdlib.h>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct mooncake
+{
+	
+	double amount, tp, sp;
+}m[1005];
+
+int cmp(mooncake a, mooncake b)
+{
+	return a.sp >b.sp;
+}
+
+int main()
+{
+    int n, d, sum = 0;
+	double p = 0;
+	cin >> n >> d;
+	for(int i = 0; i < n; i++)
+		scanf("%lf", &m[i].amount);
+	for(int i = 0; i < n; i++){
+		scanf("%lf", &m[i].tp);
+		m[i].sp = m[i].tp / m[i].amount;
+	}
+	sort(m, m + n, cmp);
+	int i = 0;
+	while(i < n){
+		if(sum + m[i].amount < d){
+			sum += m[i].amount;
+			p += m[i].tp;
+			i++;
+		}
+		else{
+			p += m[i].sp * (d - sum);
+			break;
+		}
+	}
+	printf("%.2lf", p);
+	cin >> n;
+	return 0;
+}

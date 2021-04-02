@@ -1,0 +1,30 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	int n, m, x, temp, num = 1;
+	cin >> m >> n;
+	scanf("%d", &x);
+	for(int i = 1; i < m * n; i++){
+		scanf("%d", &temp);
+		if(temp != x){
+			num--;
+			if(num < 0){
+				x = temp;
+				num = 1;
+			}
+		}
+		else num++;
+	}
+	cout << x;
+	cin >> n;
+	return 0;
+}
