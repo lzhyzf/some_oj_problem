@@ -1,0 +1,41 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+map<int, int> exist;
+vector<int> pre;
+
+int main() {
+	int m, n, u, v;
+	scanf("%d %d", &m, &n);
+	pre.resize(n);
+	for(int i = 0; i < n; i++){
+		scanf("%d", &pre[i]);
+		exist[pre[i]] = 1;
+	}
+	for(int i = 0; i < m; i++){
+		scanf("%d %d", &u, &v);
+		if(exist[u] == 0 && exist[v] == 0) printf("ERROR: %d and %d are not found.\n", u, v);
+		else if(exist[u] == 0) printf("ERROR: %d is not found.\n", u);
+		else if(exist[v] == 0) printf("ERROR: %d is not found.\n", v);
+		else{
+			int a;
+			for(int j = 0; j < n; j++){
+				if((pre[j] >= u && pre[j] <= v) || (pre[j] <= u && pre[j] >= v)){
+					a = pre[j];
+					break;
+				}
+			}
+			if(a == u) printf("%d is an ancestor of %d.\n", u, v);
+			else if (a == v) printf("%d is an ancestor of %d.\n", v, u);
+			else printf("LCA of %d and %d is %d.\n", u, v, a);
+		}
+	}
+	cin >> n;
+	return 0;
+}

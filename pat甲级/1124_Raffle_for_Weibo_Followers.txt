@@ -1,0 +1,29 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+
+using namespace std;
+int n;
+
+int main() {
+	int m, n, s, num = 0, flag = 0;
+	string str;
+	map<string, int> mapp;
+	scanf("%d %d %d", &m, &n, &s);
+	for(int i = 1; i <= m; i++){
+		cin >> str;
+		if(mapp[str] == 1) s++;
+		if(s == i && mapp[str] == 0){
+			cout << str << endl;
+			mapp[str] = 1;
+             flag = 1;
+              s += n;
+		}
+	}
+	if(flag == 0) printf("Keep going...");
+	cin >> n;
+    return 0;
+}

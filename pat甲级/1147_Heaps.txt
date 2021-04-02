@@ -1,0 +1,60 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+int n;
+vector<int> level, post;
+
+int judge()
+{//大顶堆返回1，小顶堆返回2，不是堆返回3
+	int exist[2] = {};//exist[0]来保存出现父亲结点大于子结点情况，[1]表示出现父亲结点小于子结点情况
+	for(int i = 1; i <= n / 2; i++){
+		if(level[i] > level[2*i]) exist[0] = 1;
+		if(level[i] < level[2*i]) exist[1] = 1;
+		if(2*i+1 <= n){
+			if(level[i] > level[2*i+1]) exist[0] = 1;
+			if(level[i] < level[2*i+1]) exist[1] = 1;
+		}
+	}
+	if(exist[0] == 1 && exist[1] == 1) return 3;
+	else if(exist[0] == 1) return 1;
+	else return 2;
+}
+
+void posttra(int index)
+{
+	if(index <= n){
+		if(2*index <= n) posttra(2*index);
+		if(2*index+1 <= n) posttra(2*index+1);
+		post.push_back(level[index]);
+	}
+}
+
+int main() {
+	int m;
+	scanf("%d %d", &m, &n);
+	level.resize(n + 1);
+	for(int i = 0; i < m; i++){
+		for(int j = 1; j <= n; j++)
+			scanf("%d", &level[j]);
+		int flag = judge();
+		if(flag == 1) printf("Max Heap\n");
+		else if(flag == 2) printf("Min Heap\n");
+		else printf("Not Heap\n");
+		post.clear();
+		posttra(1);
+		for(int j = 0; j < post.size(); j++){
+			printf("%d", post[j]);
+			if(j != post.size() - 1) printf(" ");
+		}
+		printf("\n");
+	}
+	cin >> n;
+	return 0;
+}

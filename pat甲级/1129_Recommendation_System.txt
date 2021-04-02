@@ -1,0 +1,45 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+
+using namespace std;
+
+struct node
+{
+	int num, index;
+	bool friend operator < (const node &a, const node &b)
+	{
+		if(a.num == b.num) return a.index < b.index;
+		else return a.num > b.num;
+	}
+};
+
+int book[50001];
+
+int main() {
+	int n, k;
+	scanf("%d %d", &n, &k);
+	set<node> s;
+	for(int i = 0; i < n; i++){
+		int temp;
+		scanf("%d", &temp);
+		if(i != 0){
+			printf("%d:", temp);
+			int tempcnt = 0;
+			for(set<node>::iterator it = s.begin(); it != s.end() && tempcnt < k; it++, tempcnt++)
+				printf(" %d", it->index);
+			printf("\n");
+		}
+		node a = {book[temp], temp};
+		auto it = s.find(a);
+		if(it != s.end()) s.erase(it);
+		book[temp]++;
+		a.num++;
+		s.insert(a);
+	}
+	cin >> k;
+	return 0;
+}

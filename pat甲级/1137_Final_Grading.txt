@@ -1,0 +1,66 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	string name;
+	int pro, mid, fin, aver;
+	bool qua;
+}temp;
+
+map<string, node> mapp;
+map<string, int> exist;
+vector<node> ans;
+
+int cmp(node a, node b)
+{
+	if(a.aver == b.aver)
+		return a.name < b.name;
+	return a.aver > b.aver;
+}
+
+int main() {
+	int p, m, n, grade;
+	string s;
+	scanf("%d %d %d", &p, &m, &n);
+	for(int i = 0; i < p; i++){
+		cin >> s >> grade;
+		if(grade >= 200){
+			temp.name = s;
+			temp.pro = grade;
+			temp.mid = temp.fin = -1;
+			mapp[s] = temp;
+			exist[s] = 1;
+		}
+	}
+	for(int i = 0; i < m; i++){
+		cin >> s >> grade;
+		if(exist[s] == 1)
+			mapp[s].mid = grade;
+	}
+	for(int i = 0; i < n; i++){
+		cin >> s >> grade;
+		if(exist[s] == 1){
+			mapp[s].fin = grade;
+			if(grade >= mapp[s].mid) mapp[s].aver = grade;
+			else mapp[s].aver = (int)(mapp[s].mid * 0.4 + grade * 0.6 + 0.5);
+			if(mapp[s].aver >= 60) mapp[s].qua = 1;
+		}
+	}
+	for(auto it = mapp.begin(); it != mapp.end(); it++){
+		if(it->second.qua == 1)
+			ans.push_back(it->second);
+	}
+	sort(ans.begin(), ans.end(), cmp);
+	for(auto it = ans.begin(); it != ans.end(); it++)
+		cout << it->name << " " << it->pro << " " << it->mid << " " << it->fin << " " << it->aver << endl;
+	cin >> n;
+	return 0;
+}

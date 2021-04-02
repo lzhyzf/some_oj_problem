@@ -1,0 +1,72 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	bool gender;//true表示女生
+	vector<int> firend;
+};
+
+struct ansnode
+{
+	int a, b;
+}temp;
+
+vector<node> v(10000);//用来保存朋友间关系
+vector<ansnode> ans;
+
+int cmp(ansnode A, ansnode B)
+{
+	if(A.a == B.a) return A.b < B.b;
+	return A.a < B.a;
+}
+
+int main() {
+	int n, m, k;
+	scanf("%d %d", &n, &m);
+	string s1, s2;
+	int temp1, temp2;
+	for(int i = 0; i < m; i++){//读入m条关系
+		cin >> s1 >> s2;
+		temp1 = stoi(s1);
+		temp2 = stoi(s2);
+		//如果是负数则表示女生
+		v[abs(temp1)].firend.push_back(abs(temp2));
+		v[abs(temp2)].firend.push_back(abs(temp1));
+		if(s1[0] == '-') v[abs(temp1)].gender = 1;
+		if(s2[0] == '-') v[abs(temp2)].gender = 1;
+	}
+	scanf("%d", &k);
+	for(int i = 0; i < k; i++){
+		scanf("%d %d", &temp1, &temp2);
+		ans.clear();
+		for(int j = 0; j < v[abs(temp1)].firend.size(); j++){
+			if(v[v[abs(temp1)].firend[j]].gender == v[abs(temp1)].gender && v[abs(temp1)].firend[j] != abs(temp2)){
+				int c = v[abs(temp1)].firend[j];
+				for(int k = 0; k < v[c].firend.size(); k++){
+					if(v[c].firend[k] != abs(temp1) && v[v[c].firend[k]].gender == v[abs(temp2)].gender){
+						int d = v[c].firend[k];
+						if(find(v[d].firend.begin(), v[d].firend.end(), abs(temp2)) != v[d].firend.end()){
+							temp.a = c;
+							temp.b = d;
+							ans.push_back(temp);
+						}
+					}
+				}
+			}
+		}
+		sort(ans.begin(), ans.end(), cmp);
+		printf("%d\n", ans.size());
+		for(int j = 0; j < ans.size(); j++)
+			printf("%04d %04d\n", ans[j].a, ans[j].b);
+	}
+	cin >> n;
+	return 0;
+}

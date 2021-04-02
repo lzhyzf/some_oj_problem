@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+
+using namespace std;
+
+struct node
+{
+	int left, right;
+	string data;
+}tree[21];
+
+int exist[21];
+
+string dfs(int root)
+{//打印中缀表达式
+	if(tree[root].left != -1 && tree[root].right != -1) return "(" + dfs(tree[root].left) + tree[root].data + dfs(tree[root].right) + ")";
+	if(tree[root].left == -1 && tree[root].right != -1) return "(" + tree[root].data + dfs(tree[root].right) + ")";
+	if(tree[root].left == -1 && tree[root].left == -1) return tree[root].data;
+}
+
+int main() {
+	int n;
+	string ans;
+	scanf("%d", &n);
+	for(int i = 1; i <= n; i++){
+		cin >> tree[i].data;
+		scanf("%d %d", &tree[i].left, &tree[i].right);
+		if(tree[i].left != -1) exist[tree[i].left] = 1;
+		if(tree[i].right != -1) exist[tree[i].right] = 1;
+	}
+	int root = 1;
+	while(exist[root] == 1) root++;
+	ans = dfs(root);
+	if(ans[0] == '(') ans = ans.substr(1, ans.size()-2);
+	cout << ans;
+	cin >> n;
+	return 0;
+}

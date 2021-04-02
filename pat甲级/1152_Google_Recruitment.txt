@@ -1,0 +1,41 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cmath>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> in, pre;
+map<int, int> exist;
+
+bool isprime(int x)
+{
+	if(x <= 1) return false;
+	if(x == 2) return true;
+	for(int i = 2; i <= sqrt(x) + 1; i++)
+		if(x % i == 0) return false;
+	return true;
+}
+
+int main() {
+	int l, k, flag = 0;
+	string s;
+	scanf("%d %d", &l, &k);
+	cin >> s;
+	for(int i = 0; i <= l - k; i++){
+		string s1 = s.substr(i, k);
+		int a = stoi(s1);
+		if(isprime(a)){
+			flag = 1;
+			cout << s1;
+			break;
+		}
+	}
+	if(flag == 0) printf("404");
+	cin >> l;
+	return 0;
+}

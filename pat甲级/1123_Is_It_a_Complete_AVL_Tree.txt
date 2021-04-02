@@ -1,0 +1,123 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <set>
+
+using namespace std;
+int n;
+
+struct node
+{
+	node *left, *right;
+	int data;
+};
+
+int getheight(node *T)
+{
+	if(T == NULL)
+		return 0;
+	else return max(getheight(T->left), getheight(T->right)) + 1;
+}
+
+node* Lrotate(node *T)
+{
+	node *temp = T->right;
+	T->right = temp->left;
+	temp->left = T;
+	return temp;
+}
+
+node* Rrotate(node *T)
+{
+	node *temp = T->left;
+	T->left = temp->right;
+	temp->right = T;
+	return temp;
+}
+
+node* LRrotate(node *T)
+{
+	T->left = Lrotate(T->left);
+	return Rrotate(T);
+	
+}
+
+node* RLrotate(node *T)
+{
+	T->right = Rrotate(T->right);
+	return Lrotate(T);
+}
+
+
+node* InsertAVL(node *T, int x)
+{
+	if(T == NULL){
+		T = (node*)malloc(sizeof(struct node));
+		T->left = T->right = NULL;
+		T->data = x;
+	}
+	else if(T->data < x){
+		T->right = InsertAVL(T->right, x);
+		int l = getheight(T->left);
+		int r = getheight(T->right);
+		if(r - l == 2){
+			if(T->right->data < x)
+				T = Lrotate(T);
+			else T =  RLrotate(T);
+		}
+	}
+	else{
+		T->left = InsertAVL(T->left, x);
+		int l = getheight(T->left);
+		int r = getheight(T->right);
+		if(l - r == 2){
+			if(T->left->data > x)
+				T = Rrotate(T);
+			else T = LRrotate(T);
+		}
+	}
+	return T;
+}
+
+int isComplete = 1, after = 0;
+vector<int> levelOrder(node *tree) {
+    vector<int> v;
+    queue<node *> queue;
+    queue.push(tree);
+    while (!queue.empty()) {
+        node *temp = queue.front();
+        queue.pop();
+        v.push_back(temp->data);
+        if (temp->left != NULL) {
+            if (after) isComplete = 0;
+            queue.push(temp->left);
+        } else {
+            after = 1;
+        }
+        if (temp->right != NULL) {
+            if (after) isComplete = 0;
+            queue.push(temp->right);
+        } else {
+            after = 1;
+        }
+    }
+    return v;
+}
+
+int main() {
+	int temp;
+	node* T = NULL;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++){
+		scanf("%d", &temp);
+		T = InsertAVL(T, temp);
+	}
+	vector<int> v = levelOrder(T);
+    for (int i = 0; i < v.size(); i++) {
+        if (i != 0) printf(" ");
+        printf("%d", v[i]);
+    }
+    printf("\n%s", isComplete ? "YES" : "NO");
+	cin >> n;
+    return 0;
+}

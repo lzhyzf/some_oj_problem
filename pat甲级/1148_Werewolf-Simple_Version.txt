@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+	int n;
+	scanf("%d", &n);
+	vector<int> a(n+1), lie;
+	for(int i = 1; i <= n; i++)
+		scanf("%d", &a[i]);
+	for(int i = 1; i <= n; i++){
+		for(int j = i+1; j <= n; j++){
+			int num = 0;
+			lie.clear();
+			for(int k = 1; k <= n; k++){
+				if(a[k] < 0 && (abs(a[k]) != i && abs(a[k]) != j)){
+					num++;
+					lie.push_back(k);
+				}
+				if(a[k] > 0 && (a[k] == i || a[k] == j)){
+					num++;
+					lie.push_back(k);
+				}
+			}
+			if(num == 2){
+				if((lie[0] == i && lie[1] != j) || (lie[0] == j && lie[1] != i) || (lie[1] == i && lie[0] != j) || (lie[1] == j && lie[0] != i)){
+					printf("%d %d", i, j);
+					cin >> n;
+					return 0;
+				}
+			}
+		}
+	}
+	printf("No Solution");
+	cin >> n;
+	return 0;
+}

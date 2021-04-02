@@ -1,0 +1,50 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> in, pre;
+map<int, int> exist;
+
+void tra(int prel, int prer, int inl, int inr, int pos1, int pos2)
+{
+	if(prel > prer) return;
+	int pos = exist[pre[prel]];
+	if(pos == pos1) printf("%d is an ancestor of %d.\n", in[pos1], in[pos2]);
+	else if(pos == pos2) printf("%d is an ancestor of %d.\n", in[pos2], in[pos1]);
+	else if(pos1 < pos && pos2 < pos) tra(prel+1, prel + pos - inl, inl, pos-1, pos1, pos2);
+	else if(pos1 > pos && pos2 > pos) tra(prel+pos-inl+1, prer, pos+1, inr, pos1, pos2);
+	else if((pos1 < pos && pos < pos2) || (pos2 < pos && pos < pos1))
+		printf("LCA of %d and %d is %d.\n", in[pos1], in[pos2], in[pos]);
+}
+
+int main() {
+	int n, m, temp1, temp2;
+	scanf("%d %d", &m, &n);
+	in.resize(n+1);
+	pre.resize(n+1);
+	for(int i = 1; i <= n; i++){
+		scanf("%d", &in[i]);
+		exist[in[i]] = i;
+	}
+	for(int i = 1; i <= n; i++)
+		scanf("%d", &pre[i]);
+	for(int i = 0; i < m; i++){
+		scanf("%d %d", &temp1, &temp2);
+		if(exist[temp1] == 0 && exist[temp2] == 0)
+			printf("ERROR: %d and %d are not found.\n", temp1, temp2);
+		else if(exist[temp1] == 0 || exist[temp2] == 0)
+			printf("ERROR: %d is not found.\n", exist[temp1] == 0 ? temp1 : temp2);
+		else{
+			int pos1 = exist[temp1], pos2 = exist[temp2];
+			tra(1, n, 1, n, pos1, pos2);
+		}
+	}
+	cin >> n;
+	return 0;
+}

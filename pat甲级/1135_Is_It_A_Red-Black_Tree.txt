@@ -1,0 +1,90 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+
+using namespace std;
+vector<int> pre;
+int flag;
+
+struct node
+{
+	node *left, *right;
+	int data;
+	int isred;
+};
+
+void BuildT(node *&tree, int prel, int prer)
+{
+	if(prel > prer) return;
+	tree = (node*)malloc(sizeof(struct node));
+	tree->data = abs(pre[prel]);
+	if(pre[prel] < 0) tree->isred = 1;
+	tree->left = tree->right = NULL;
+	int i = prel + 1;
+	while(i <= prer && (abs(pre[i]) < abs(pre[prel]))) i++;
+	BuildT(tree->left, prel + 1, i - 1);
+	BuildT(tree->right, i, prer);
+}
+
+void dfs1(node *tree)
+{//判断一个红色结点的孩子结点是否都是黑色节点
+	if(tree == NULL) return;
+	else{
+		if(tree->isred == 1){
+			if(tree->left && tree->left->isred == 1)
+				flag = 1;
+			if(tree->right && tree->right->isred == 1)
+				flag = 1;
+		}
+	}
+	dfs1(tree->left);
+	dfs1(tree->right);
+}
+
+int getnum(node *tree)
+{
+	if(tree == NULL) return 0;
+	int l = getnum(tree->left);
+	int r = getnum(tree->right);
+	return tree->isred == 1 ? max(l, r) : max(l, r) + 1;
+}
+
+int judge(node *tree)
+{
+	if(tree == NULL) return 1;
+	int l = getnum(tree->left);
+	int r = getnum(tree->right);
+	if(l != r) return false;
+	else return judge(tree->left) && judge(tree->right);
+}
+
+void isrbt(node *tree)
+{
+	if(tree->isred == 1){
+		flag = 1;
+		return;
+	}
+	dfs1(tree);
+	if(flag == 0) flag = !judge(tree);
+}
+
+int main() {
+	int k, n;
+	scanf("%d", &k);
+	for(int i = 0; i < k; i++){
+		scanf("%d", &n);
+		pre.resize(n);
+		for(int j = 0; j < n; j++)
+			scanf("%d", &pre[j]);
+		node *T;
+		BuildT(T, 0, n-1);
+		flag = 0;
+		isrbt(T);
+		printf("%s\n", flag ? "No" : "Yes");
+	}
+	cin >> n;
+	return 0;
+}

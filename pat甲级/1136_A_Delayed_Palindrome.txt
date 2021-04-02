@@ -1,0 +1,59 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+string rev(string s)
+{
+	reverse(s.begin(), s.end());
+	return s;
+}
+
+bool ispal(string s)
+{
+	return s == rev(s);
+}
+
+string add(string s)
+{
+	string s1 = rev(s), ans;
+	int len = s.length(), carry = 0, num = 0;
+	for(int i = 0; i < len; i++){
+		num = (s[len - i - 1] + s1[len - i - 1] - '0' - '0' + carry) % 10;
+		carry = (s[len - i - 1] + s1[len - i - 1] - '0' - '0' + carry) / 10;
+		ans += to_string(num);
+	}
+	if(carry) ans += "1";
+	reverse(ans.begin(), ans.end());
+	return ans;
+}
+
+int main() {
+	int n;
+	string s;
+	int i;
+	cin >> s;
+	if(ispal(s)){
+		cout << s << " is a palindromic number.";
+		return 0;
+	}
+	else{
+		for(i = 0; i < 10; i++){
+			cout << s + " + " + rev(s) + " = ";
+			s = add(s);
+			cout << s << endl;
+			if(ispal(s)){
+				cout << s << " is a palindromic number.";
+				break;
+			}
+		}
+	}
+	if(i == 10)printf("Not found in 10 iterations.");
+	cin >> n;
+	return 0;
+}

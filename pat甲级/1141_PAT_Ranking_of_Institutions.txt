@@ -1,0 +1,74 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	string school;
+	double totalg;
+	int num, roundeds;
+}temp;
+
+map<string, int> mapp;//将学校映射成一个整数
+vector<node> ans;
+
+int cmp(node a, node b)
+{
+	if(a.roundeds == b.roundeds && a.num == b.num) return a.school < b.school;
+	else if(a.roundeds == b.roundeds) return a.num < b.num;
+	else return a.roundeds > b.roundeds;
+}
+
+int main() {
+	int n;
+	scanf("%d", &n);
+	string id, sch;
+	int score, schcnt = 1;
+	for(int i = 0; i < n; i++){
+		cin >> id >> score >> sch;
+		for(int j = 0; j < sch.length(); j++){
+			if(sch[j] >= 'A' && sch[j] <= 'Z')
+				sch[j] -= 'A' - 'a';
+		}
+		if(mapp[sch] == 0){
+			mapp[sch] = schcnt++;
+			temp.school = sch;
+			if(id[0] == 'A') temp.totalg = score;
+			if(id[0] == 'B') temp.totalg = score / 1.5;
+			if(id[0] == 'T') temp.totalg = score * 1.5;
+			temp.num = 1;
+			ans.push_back(temp);
+		}
+		else{
+			ans[mapp[sch]-1].num++;
+			if(id[0] == 'A') ans[mapp[sch]-1].totalg += score;
+			if(id[0] == 'B') ans[mapp[sch]-1].totalg += score / 1.5;
+			if(id[0] == 'T') ans[mapp[sch]-1].totalg += score * 1.5;
+		}
+	}
+	for(int i = 0; i < schcnt - 1; i++){
+		ans[i].roundeds = (int)ans[i].totalg;
+	}
+	sort(ans.begin(), ans.end(), cmp);
+	printf("%d\n", schcnt - 1);
+	int rank = 1;
+	for(int i = 1; i <= schcnt - 1; i++){
+		if(i == 1) cout << "1 " << ans[i-1].school << " " << ans[i-1].roundeds << " " << ans[i-1].num << endl;
+		else{
+			if(ans[i-1].roundeds == ans[i-2].roundeds)
+				cout << rank << " " << ans[i-1].school << " " << ans[i-1].roundeds << " " << ans[i-1].num << endl;
+			else{
+				rank = i;
+				cout << rank << " " << ans[i-1].school << " " << ans[i-1].roundeds << " " << ans[i-1].num << endl;
+			}
+		}
+	}
+	cin >> n;
+	return 0;
+}

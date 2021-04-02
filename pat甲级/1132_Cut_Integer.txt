@@ -1,0 +1,23 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
+
+using namespace std;
+
+int main() {
+	int n, temp;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++){
+		scanf("%d", &temp);
+		string str = to_string(temp);
+		int len = str.length();
+		int a = stoi(str.substr(0, len / 2)), b = stoi(str.substr(len / 2, len / 2));
+		if(a * b == 0) printf("No\n");
+		else printf("%s\n", temp % (a * b) == 0 ? "Yes" : "No");
+	}
+	cin >> n;
+	return 0;
+}
