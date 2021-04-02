@@ -1,0 +1,60 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+int n, k;
+
+struct people
+{
+	int worktime, arrivetime;
+};
+
+int findwin(vector<int> &w)
+{//找出能最早空出一个人的窗口
+	int win = 0;
+	for(int i = 1; i < k; i++){
+		if(w[i] < w[win])
+			win = i;
+	}
+	return win;
+}
+
+int cmp1(people a, people b)
+{
+	return a.arrivetime < b.arrivetime;
+}
+
+int main() 
+{
+	int hh, mm, ss, workt, sumtime = 0, num = 0;
+	scanf("%d %d", &n, &k);
+	vector<people> p(n);
+	vector<int> windows(k);
+	for(int i = 0; i < n; i++){
+		scanf("%d:%d:%d %d", &hh, &mm, &ss, &workt);
+		p[i].arrivetime = hh*3600 + mm*60 + ss;
+		p[i].worktime = workt * 60;
+		if(p[i].arrivetime < 17 * 3600 + 1)
+			num++;
+	}
+	for(int i = 0; i < k; i++)//初始化窗口时间，表示8点开门
+		windows[i] = windows[i] = 8*3600;
+	sort(p.begin(), p.end(), cmp1);//将到的人按先后顺序排序
+	//模拟
+	for(int i = 0; i < num; i++){//模拟进各个窗口
+		int win = findwin(windows);
+		if(p[i].arrivetime < windows[win]){//如果人到的时候需要等待
+			sumtime += windows[win] - p[i].arrivetime;
+			windows[win] += p[i].worktime;
+		}
+		else{//人到的时候不用等
+			windows[win] = p[i].arrivetime + p[i].worktime;
+		}
+	}
+	printf("%.1f", sumtime / (float)num / 60);
+	cin >> n;
+    return 0;
+}

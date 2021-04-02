@@ -1,0 +1,63 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+struct node
+{
+	int poptime, endtime;
+	queue<int> q;
+};
+
+int n, m, k, q, temp;
+
+int findwin(vector<node> windows)
+{//找出能最早空出一个人的窗口
+	int win = 1;
+	for(int i = 2; i <= n; i++){
+		if(windows[i].poptime < windows[win].poptime)
+			win = i;
+	}
+	return win;
+}
+
+int main() {
+    scanf("%d %d %d %d", &n, &m, &k, &q);
+	vector<int> time(k+1);
+	vector<node> windows(n+1);
+	vector<int> fin(k+1);
+	vector<int> sorry(k+1);
+	for(int i = 1; i <= k; i++)
+		scanf("%d", &time[i]);
+	//模拟
+	for(int i = 1; i <= n && i <= k; i++){//模拟前n个人秒进各个窗口
+		windows[i].q.push(i);
+		windows[i].endtime = windows[i].poptime = fin[i] = 8 * 60 + time[i];
+	}
+	for(int i = n+1; i <= n*m && i <= k; i++){//模拟第n+1到n*m个人
+		if(windows[i%n == 0? n : i % n].endtime >= 17*60)
+			sorry[i] = 1;
+		windows[i%n == 0? n : i % n].q.push(i);
+		windows[i%n == 0? n : i % n].endtime += time[i];
+		fin[i] = windows[i%n == 0? n : i % n].endtime;
+	}
+	for(int i = n*m+1; i <= k; i++){//模拟n*m个人之后
+		int win = findwin(windows);
+		if(windows[win].endtime >= 17*60)
+			sorry[i] = 1;
+		windows[win].q.pop();
+		windows[win].poptime += time[windows[win].q.front()];
+		windows[win].q.push(i);
+		windows[win].endtime += time[i];
+		fin[i] = windows[win].endtime;
+	}
+	for(int i = 0; i < q; i++){
+		scanf("%d", &temp);
+		if(sorry[temp] == 1) printf("Sorry\n");
+		else printf("%02d:%02d\n", fin[temp]/60, fin[temp]%60);
+	}
+	cin >> n;
+    return 0;
+}

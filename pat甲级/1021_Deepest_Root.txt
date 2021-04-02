@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <cmath>
+#include <set>
+
+using namespace std;
+
+bool g[10001][10001];
+bool visited[10001];
+vector<int> maxnode;
+set<int> s;
+int maxheight = 0;
+
+void dfs(int v, int n, int height)
+{
+	visited[v] = true;
+	if(height > maxheight){
+		maxheight = height;
+		maxnode.clear();
+		maxnode.push_back(v);
+	}
+	else if(height == maxheight) maxnode.push_back(v);
+	for(int i = 1; i <= n; i++){
+		if(!visited[i] && g[i][v] == true)
+			dfs(i, n, height + 1);
+	}
+}
+
+int main()
+{
+	int n, cnt = 0, a, b;
+	scanf("%d", &n);
+	for(int i = 0; i < n-1; i++){
+		scanf("%d %d", &a, &b);
+		g[a][b] = g[b][a] = 1;
+	}
+	for(int i = 1; i <= n; i++){
+		if(!visited[i]){
+			dfs(i, n, 0);
+			cnt++;
+		}
+	}
+	if(cnt != 1) printf("Error: %d components", cnt);
+	else{
+		for(int i = 0; i < maxnode.size(); i++)
+			s.insert(maxnode[i]);
+		fill(visited+1, visited+1+n, false);
+		maxheight = 0;
+		dfs(maxnode[0], n, 0);
+		for(int i = 0; i < maxnode.size(); i++)
+			s.insert(maxnode[i]);
+		for(auto it = s.begin(); it != s.end(); it++)
+			printf("%d\n", *it);
+	}
+	scanf("%d", &n);
+	return 0;
+}

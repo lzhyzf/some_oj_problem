@@ -1,0 +1,110 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+const int inf = 9999999;
+int cmax, n, sp, m, v1, v2, e;
+int minneed = inf, minback = inf;
+
+int g[505][505], weight[505], minpath[505];
+bool visited[505];
+vector<int> pre[505];
+vector<int> temppath, path;
+
+int finv()
+{//找到未访问过的路径最短的结点
+	int min = inf, minv = 0;
+	for(int i = 1; i <= n; i++){
+		if(visited[i] == false && minpath[i] < min){
+			min = minpath[i];
+			minv = i;
+		}
+	}
+	return minv;
+}
+
+void dijkastra(int start, int end)
+{
+	//初始化
+	visited[start] = true;
+	minpath[start] = 0;
+	for(int i = 0; i <= n; i++){
+		//找到未访问过的路径最短的结点
+		int ver = finv();
+		if(ver == end) return;
+		//访问
+		visited[ver] = true;
+		//修改途径该结点对其他结点的影响
+		for(int i = 0; i <= n; i++){
+			if(visited[i] == false && g[ver][i] + minpath[ver] < minpath[i]){//途径ver点会让i点路程更近，说明ver是i的前驱结点
+				minpath[i] = g[ver][i] + minpath[ver];
+				pre[i].clear();
+				pre[i].push_back(ver);
+			}
+			else if(visited[i] == false && g[ver][i] + minpath[ver] == minpath[i])
+				pre[i].push_back(ver);
+		}
+	}
+}
+
+void dfs(int v, int start)
+{//已经得到了前驱结点构成的树，则利用dfs遍历进行第二尺度的判优
+	temppath.push_back(v);
+	if(v == start){//递归边界
+		int need = 0, back = 0;
+		for(int i = temppath.size() - 1; i >= 0; i--){
+			if(weight[temppath[i]] > 0)
+				back += weight[temppath[i]];
+			else{
+				if(back > -weight[temppath[i]])
+					back += weight[temppath[i]];
+				else{
+					need += (0 - weight[temppath[i]] - back);
+					back = 0;
+				}
+			}
+		}
+		if(need < minneed){
+			path = temppath;
+			minback = back;
+			minneed = need;
+		}
+		else if(need == minneed && back < minback){
+			path = temppath;
+			minback = back;
+		}
+	}
+	else{
+		for(int i = 0; i < pre[v].size(); i++)
+			dfs(pre[v][i], start);
+	}
+	temppath.pop_back();
+}
+
+int main() 
+{
+	scanf("%d %d %d %d", &cmax, &n, &sp, &m);
+	for(int i = 1; i <= n; i++){//存入点权
+		scanf("%d", &weight[i]);
+		weight[i] -= cmax/2;
+	}
+	fill(g[0], g[0]+505*505, inf);
+	fill(minpath, minpath+505, inf);
+	for(int i = 1; i <= m; i++){//读入图的边
+		scanf("%d %d %d", &v1, &v2, &e);
+		g[v1][v2] = g[v2][v1] = e;
+	}
+	dijkastra(0, sp);
+	dfs(sp, 0);
+	printf("%d ", minneed);
+	for(int i = path.size(); i > 0; i--){
+		if(i == path.size()) printf("%d", path[i-1]);
+		else printf("->%d", path[i-1]);
+	}
+	printf(" %d", minback);
+	cin >> n;
+	return 0;
+}

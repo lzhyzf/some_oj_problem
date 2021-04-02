@@ -1,0 +1,43 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <vector>
+#include <map>
+#include <set>
+#include <stack>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+
+using namespace std;
+
+void add(string &s, string ans)
+{
+	int carry = 0, len = s.length();
+	for(int i = 0; i < len; i++){
+		s[i] = s[i] + ans[i] + carry - '0';
+		carry = 0;
+		if(s[i] > '9'){
+			s[i] -= 10;
+			carry = 1;
+		}
+	}
+	if(carry) s += '1';
+	reverse(s.begin(), s.end());
+}
+
+int main()
+{
+	string s, ans;
+	int k, i;
+	cin >> s >> k;
+	for(i = 0; i <= k; i++){
+		ans = s;
+		reverse(ans.begin(), ans.end());
+		if(ans == s || i == k) break;
+		add(s, ans);
+	}
+	cout << s << endl << i;
+	cin >> k;
+	return 0;
+}

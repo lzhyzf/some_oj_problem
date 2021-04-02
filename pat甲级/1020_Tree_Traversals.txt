@@ -1,0 +1,39 @@
+#include <cstdio>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+int level[10000], post[31], in[31];
+
+void transfer(int postl, int postr, int inl, int inr, int index)
+{
+	if(postl <= postr){
+		level[index] = post[postr];
+		int i = inl;
+		for(; i <= inr && post[postr] != in[i]; i++);
+		int leftnum = i - inl;
+		transfer(postl, postl + leftnum - 1, inl, i - 1, 2*index);
+		transfer(postl + leftnum, postr - 1, i + 1, inr, 2*index+1);
+	}
+}
+
+int main() 
+{
+	int n;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &post[i]);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &in[i]);
+	fill(level, level+10000, -1);
+	transfer(0, n-1, 0, n-1, 1);
+	for(int i = 1; i < 10000; i++){
+		if(i == 1) printf("%d", level[i]);
+		else if(level[i] != -1) printf(" %d", level[i]);
+	}
+	cin >> n;
+	return 0;
+}

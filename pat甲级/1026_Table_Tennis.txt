@@ -1,0 +1,158 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <vector>
+#include <map>
+#include <set>
+#include <stack>
+#include <string>
+#include <string.h>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+
+using namespace std;
+
+struct personnode
+{
+	int arrive, start, time;//达到时间，开始服务时间，玩的持续时间
+	bool vip;//是否是vip
+}tempperson;
+
+struct tablenode
+{
+	int end, num;//桌子当前玩家结束时间和该桌服务玩家数量
+	bool vip;//是否是vip桌
+};
+
+vector<personnode> player;
+vector<tablenode> table;
+
+int findnextvip(int vipid)
+{//找到下一个vip的下标，若不存在，返回的是总玩家人数
+	vipid++;
+	for(; vipid < player.size() && !player[vipid].vip; vipid++);
+	return vipid;
+}
+
+int findtable(int k)
+{//找到并返回最先结束的桌子下标
+	int index = 1;
+	for(int i = 2; i <= k; i++){
+		if(table[i].end < table[index].end)
+			index = i;
+	}
+	return index;
+}
+
+void allocate(int personid, int tableid)
+{//把某人分给某桌
+	if(player[personid].arrive < table[tableid].end)
+		player[personid].start = table[tableid].end;
+	else player[personid].start = player[personid].arrive;
+	table[tableid].end = player[personid].start + player[personid].time;
+	table[tableid].num++;
+}
+
+int cmp1(personnode a, personnode b)
+{
+	return a.arrive < b.arrive;
+}
+
+int cmp2(personnode a, personnode b)
+{
+	return a.start < b.start;
+}
+
+int main()
+{
+	int n, k, m;
+	cin >> n;
+	for(int i = 0; i < n; i++){//读入n名玩家信息，到达时间大于21：00的则忽略
+		int h, m, s, time, vip;
+		scanf("%d:%d:%d %d %d", &h, &m, &s, &time, &vip);
+		tempperson.arrive = h * 3600 + m * 60 + s;
+		if(tempperson.arrive >= 21 * 3600) continue;
+		tempperson.time = (time < 120) ?  time * 60 : 7200;
+		tempperson.vip = (vip == 1) ? true : false;
+		tempperson.start = 21 * 3600;
+		player.push_back(tempperson);
+	}
+	sort(player.begin(), player.end(), cmp1);//将玩家按照到来的顺序排序
+	cin >> k >> m;
+	table.resize(k + 1);
+	for(int i = 0; i < m; i++){
+		int temp;
+		cin >> temp;
+		table[temp].vip = true;
+	}
+	for(int i = 1; i <= k; i++)
+		table[i].end = 8 * 3600;
+	int i = 0, vipid = findnextvip(-1);
+	while(i < player.size()){//模拟
+		int tableindex = findtable(k);//找到最先结束的桌子
+		if(table[tableindex].end >= 21 * 3600) break;//如果最早结束的桌子已经超过21：00，则结束模拟
+		if(player[i].vip && i < vipid){
+			i++;
+			continue;
+		}
+		if(table[tableindex].vip){//如果先空闲的是vip桌子
+			if(player[i].vip){//如果第一个到的是vip，则将该vip分配到vip桌子
+				allocate(i, tableindex);
+				if(i == vipid)
+					vipid = findnextvip(i);
+				i++;	
+			}
+			else{//如果第一个到的不是vip
+				if(vipid != player.size() && player[vipid].arrive <= table[tableindex].end){//排队队列中有vip，则让该vip优先进入vip房间
+					allocate(vipid, tableindex);
+					vipid = findnextvip(vipid);
+				}
+				else{//如果排队队列中还没有vip，则将该房间分给玩家
+					allocate(i, tableindex);
+					i++;
+				}
+			}
+		}
+		else{//如果第一个空闲的不是vip桌子
+			if(!player[i].vip){//如果队列中第一个人不是vip，则将该人分配到该桌子
+				allocate(i, tableindex);
+				i++;
+			}
+			else{//如果队列中的第一个人是vip
+				int minviptable = -1, minend = 99999999;
+				for(int j = 1; j <= k; j++){
+					if(table[j].vip && table[j].end < minend){
+						minviptable = j;
+						minend = table[j].end;
+					}
+				}
+				if(minviptable != -1 && table[minviptable].end <= player[i].arrive){
+					allocate(i, minviptable);
+					if(i == vipid)
+						vipid = findnextvip(i);
+					i++;
+				}
+				else{//如果不存在相同结束时间的vip桌
+					allocate(i, tableindex);
+					if(i == vipid)
+						vipid = findnextvip(i);
+					i++;
+				}
+			}
+		}
+	}
+	sort(player.begin(), player.end(), cmp2);
+	for(int i = 0; i < player.size(); i++){
+		if(player[i].start < 21 * 3600){
+			printf("%02d:%02d:%02d %02d:%02d:%02d ", player[i].arrive / 3600, player[i].arrive % 3600 / 60,player[i].arrive % 60, player[i].start / 3600, player[i].start % 3600 / 60,player[i].start % 60);
+			printf("%d\n", (player[i].start - player[i].arrive + 30) / 60);
+		}
+	}
+	for(int i = 1; i <= k; i++){
+		printf("%d", table[i].num);
+		if(i != k) printf(" ");
+	}
+	cin >> n;
+	return 0;
+}

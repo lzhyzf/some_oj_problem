@@ -1,0 +1,71 @@
+#include <cstdio>
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+const int inf = 99999999;
+
+int g[500][500], c[500][500], mind[500], minc[500];//mind记录从起始点到下标点的最小距离，minc记录起始点到下标点的最小费用
+int pre[500];
+bool visited[500] = {};
+vector<int> path;
+
+int main()
+{
+	int n, m, s, e, c1, c2, dis, co;
+	scanf("%d %d %d %d", &n, &m, &s, &e);
+	for(int i = 0; i < n; i++){
+	//	pre[i] = i;
+		for(int j = 0; j < n; j++)
+			g[i][j] = inf;
+	}
+	for(int i = 0; i < m; i++){//读入距离，费用
+		scanf("%d %d %d %d", &c1, &c2, &dis, &co);
+		g[c1][c2] = g[c2][c1] = dis;
+		c[c1][c2] = c[c2][c1] = co;
+	}
+	fill(mind, mind + n, inf);
+	fill(minc, minc + n, inf);
+	mind[s] = 0;
+	minc[s] = 0;
+	for(int i = 0; i < n; i++){//dijkastra,需要依次读入n个结点
+		//找到本次从起始点到能去的距离最小的且未去过的结点u
+		int u, min = inf;
+		for(int j = 0; j < n; j++){
+			if(visited[j] == false && mind[j] < min){
+				min = mind[j];
+				u = j;
+			}
+		}
+		if(u == e){
+			while(pre[u] != s){
+				path.push_back(u);
+				u = pre[u];
+			}
+			path.push_back(u);
+			path.push_back(s);
+			for(int i = path.size(); i > 0; i--)
+				printf("%d ", path[i-1]);
+			printf("%d %d", mind[e], minc[e]);
+			break;
+		}
+		visited[u] = true;
+		//修改途经u对其他结点的影响
+		for(int j = 0; j < n; j++){
+			if(visited[j] == false && mind[u] + g[u][j] < mind[j]){
+				mind[j] = mind[u] + g[u][j];
+				minc[j] = minc[u] + c[u][j];
+				pre[j] = u;
+			}
+			else if(visited[j] == false && mind[u] + g[u][j] == mind[j]){
+				if(minc[j] > minc[u] + c[u][j]){
+					minc[j] = minc[u] + c[u][j];
+					pre[j] = u;
+				}
+			}
+		}
+	}
+	scanf("%d", &n);
+	return 0;
+}

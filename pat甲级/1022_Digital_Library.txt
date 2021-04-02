@@ -1,0 +1,65 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <vector>
+#include <map>
+#include <set>
+#include <stack>
+#include <string>
+#include <string.h>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+
+using namespace std;
+
+void Query(map<string, set<int> > &m, string &str)
+{
+	if(m.find(str) != m.end()){
+		for(auto it = m[str].begin(); it != m[str].end(); it++)
+			printf("%07d\n", *it);
+	}
+	else printf("Not Found\n");
+}
+
+int main()
+{
+	int n;
+	cin >> n;
+	int id;
+	string title, autor, key, pub, year;
+	map<string, set<int> > mtitle, mautor, mkey, mpub, myear;
+	for(int i = 0; i < n; i++){//读入n本书的信息并建立索引
+		scanf("%d ", &id);
+		getline(cin, title);
+		mtitle[title].insert(id);
+		getline(cin, autor);
+		mautor[autor].insert(id);
+		while(cin >> key){
+			mkey[key].insert(id);
+			char c = getchar();
+			if(c == '\n') break;
+		}
+		getline(cin, pub);
+		mpub[pub].insert(id);
+		getline(cin, year);
+		myear[year].insert(id);
+	}
+	int m;
+	cin >> m;
+	for(int i = 1; i <= m; i++){
+		int indice;
+		string str;
+		scanf("%d: ", &indice);
+		getline(cin , str);
+		printf("%d: ", indice);
+		cout << str << endl;
+		if(indice == 1) Query(mtitle, str);
+		else if(indice == 2) Query(mautor, str);
+		else if(indice == 3) Query(mkey, str);
+		else if(indice == 4) Query(mpub, str);
+		else Query(myear, str);
+	}
+	cin >> n;
+	return 0;
+}

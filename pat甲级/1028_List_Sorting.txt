@@ -1,0 +1,54 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <vector>
+#include <map>
+#include <set>
+#include <stack>
+#include <string>
+#include <string.h>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+
+using namespace std;
+
+int c;
+
+struct stu
+{
+	int id, score;
+	string name;
+}student[100001];
+
+int cmp(stu a, stu b)
+{
+	if(c == 1)
+		return a.id < b.id;
+	else if(c == 2){
+		if(a.name == b.name) return a.id < b.id;
+		return a.name < b.name;
+	}
+	else if(c == 3){
+		if(a.score == b.score) return a.id < b.id;
+		return a.score < b.score;
+	}
+}
+
+int main()
+{
+	int n;
+	cin >> n >> c;
+	for(int i = 0; i < n; i++){
+		scanf("%d", &student[i].id);
+		cin >> student[i].name;
+		scanf("%d", &student[i].score);
+	}
+	sort(student, student + n, cmp);
+	for(int i = 0; i < n; i++){
+		printf("%06d ", student[i].id);
+		cout << student[i].name << " " << student[i].score << endl;
+	}
+	cin >> n;
+	return 0;
+}

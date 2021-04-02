@@ -1,0 +1,68 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <algorithm>
+
+using namespace std;
+int rate[25] = {};//rate数组用来存储每小时的价格比率，rate[24]用来存一整天的价格比率和
+
+struct node
+{
+	int month, day, hour, min, status, time;//status用来保存offline或者online，online = 1， offline = 0；
+	string name;
+};
+
+int cmp(node a, node b)
+{//按照字母顺序和时间给通话记录排序
+	return a.name == b.name ? a.time < b.time : a.name < b.name;
+}
+
+double PriceFromZero(node a)
+{
+	double price;
+	price = a.day * rate[24] * 60 + a.min * rate[a.hour];
+	for(int i = 0; i < a.hour; i++)
+		price += 60 * rate[i];
+	return price / 100;
+}
+
+int main()
+{
+	int n;
+	for(int i = 0; i < 24; i++){
+		cin >> rate[i];
+		rate[24] += rate[i];
+	}
+	cin >> n;
+	vector<node> v(n);
+	for(int i = 0; i < n; i++){
+		cin >> v[i].name;
+		scanf("%d:%d:%d:%d", &v[i].month, &v[i].day, &v[i].hour, &v[i].min);
+		v[i].time = v[i].day * 24 * 60 + v[i].hour * 60 + v[i].min;
+		string temp;
+		cin >> temp;
+		v[i].status = (temp == "on-line") ? 1 : 0;
+	}
+	sort(v.begin(), v.end(), cmp);//按照人名的字母顺序和通话时间早晚给通话记录排序
+	map<string, vector<node> > m;//将名字和对应记录做映射
+	for(int i = 1; i < n; i++){//如果通话记录成对，则通过映射抛进相应人名的vector中
+		if(v[i - 1].name == v[i].name && v[i - 1].status == 1 && v[i].status == 0){
+			m[v[i].name].push_back(v[i - 1]);
+			m[v[i].name].push_back(v[i]);
+		}
+	}
+	for(auto it : m){//便利map m,每次循环打印一个人的信息
+		cout << it.first;
+		printf(" %02d\n",it.second[0].month);
+		double sum = 0;
+		for(int i = 0; i < it.second.size(); i += 2){
+			double price = PriceFromZero(it.second[i+1]) - PriceFromZero(it.second[i]);
+			printf("%02d:%02d:%02d %02d:%02d:%02d %d $%.2lf\n", it.second[i].day, it.second[i].hour, it.second[i].min, it.second[i+1].day, it.second[i+1].hour, it.second[i+1].min, it.second[i+1].time - it.second[i].time, price);
+			sum += price;
+		}
+		printf("Total amount: $%.2lf\n", sum);
+	}
+	cin >> n;
+	return 0;
+}

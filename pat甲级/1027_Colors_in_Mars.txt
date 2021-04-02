@@ -1,0 +1,35 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <vector>
+#include <map>
+#include <set>
+#include <stack>
+#include <string>
+#include <string.h>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+
+using namespace std;
+
+int main()
+{
+	int temp;
+	char a[3] = {'A', 'B', 'C'};
+	printf("#");
+	for(int i = 0; i < 3; i++){
+		cin >> temp;
+		int shi, ge;
+		shi = temp / 13;
+		ge = temp % 13;
+		if(shi < 10)
+			printf("%d", shi);
+		else printf("%c", a[shi - 10]);
+		if(ge < 10)
+			printf("%d", ge);
+		else printf("%c", a[ge - 10]);
+	}
+	cin >> temp;
+	return 0;
+}
