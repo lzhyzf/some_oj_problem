@@ -1,0 +1,59 @@
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+int n, k, p, maxsum = -1;
+vector<int> v, tempans, ans;
+
+void init()
+{//将p次方小于等于n的值都存在v数组中
+	int temp = 0, index = 1;
+	while(temp <= n){
+		v.push_back(temp);
+		temp = pow(index, p);
+		index++;
+	}
+}
+
+void dfs(int index, int tempsum, int tempnum, int sum)
+{
+	if(tempnum == k){
+		if(sum == n && tempsum > maxsum){
+			ans = tempans;
+			maxsum = tempsum;
+		}
+		return;
+	}
+	while(index > 0){
+		if(sum + v[index] <= n){
+			tempans[tempnum] = index; 
+			dfs(index, tempsum + index, tempnum + 1, sum + v[index]);
+		}
+		if(index == 1) return;
+		index--;
+	}
+}
+
+int main()
+{
+	scanf("%d %d %d", &n, &k, &p);
+	init();
+	tempans.resize(k);
+	dfs(v.size() - 1, 0, 0, 0);
+	if(maxsum != -1)
+		for(int i = 0; i < k; i++){
+			if(i == 0) printf("%d = ", n);
+			printf("%d^%d", ans[i], p);
+			if(i != k - 1) printf(" + ");
+		}
+	else printf("Impossible");
+	cin >> n;
+	return 0;
+}

@@ -1,0 +1,102 @@
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+struct node
+{
+	vector<int> family;
+	int estatenum, estatearea;
+	int leastid;
+}f[10000];
+
+vector<node> v;
+int r[10000], visited[10000];
+
+int findr(int x)
+{
+	while(r[x] != -1)
+		x = r[x];
+	return x;
+}
+
+void Union(int a, int b)
+{//将b结点或者b结点所在集合并入a中
+	int rootb;
+	if(r[b] == -1 && a != b){//如果b结点还未插入任何集合
+		f[a].family.push_back(b);
+		if(f[a].leastid > b) f[a].leastid = b;
+		r[b] = a;
+	}
+	else{//如果b结点已经插入到集合中
+		rootb = findr(b);
+		if(rootb != a){ 
+			for(int i = 0; i < f[rootb].family.size(); i++)
+				f[a].family.push_back(f[rootb].family[i]);
+			if(f[a].leastid > f[rootb].leastid) f[a].leastid = f[rootb].leastid;
+			f[a].estatearea += f[rootb].estatearea;
+			f[a].estatenum += f[rootb].estatenum;
+			r[rootb] = a;
+		}
+	}
+}
+
+int cmp(node a, node b)
+{
+	if((double)a.estatearea / a.family.size() == (double)b.estatearea / b.family.size())
+		return a.leastid < b.leastid;
+	else return (double)a.estatearea / a.family.size() > (double)b.estatearea / b.family.size();
+}
+
+int main()
+{
+	int n, id, father, mother, k, esnum, esarea;
+	scanf("%d", &n);
+	for(int i = 0; i < 10000; i++)
+		r[i] = -1;
+	for(int i = 0; i < n; i++){
+		scanf("%d %d %d %d", &id, &father, &mother, &k);
+		visited[id] = 1;
+		int root;
+		if(r[id] == -1){//该结点还未插入过任何集合
+			root = id;
+			f[id].family.push_back(id);
+			f[id].leastid = id;
+		}
+		else root = findr(id);
+		if(father != -1){
+			Union(root, father);
+			visited[father] = 1;
+		}
+		if(mother != -1){
+			Union(root, mother);
+			visited[mother] = 1;
+		}
+		int child;
+		for(int j = 0; j < k; j++){
+			scanf("%d", &child);
+			visited[child] = 1;
+			Union(root, child);
+		}
+		scanf("%d %d", &esnum, &esarea);
+		f[root].estatenum += esnum;
+		f[root].estatearea += esarea;
+	}
+	for(int i = 0; i < 10000; i++){
+		if(visited[i] == 1 && r[i] == -1)
+			v.push_back(f[i]);
+	}
+	sort(v.begin(), v.end(), cmp);
+	printf("%d\n", v.size());
+	for(int i = 0; i < v.size(); i++){
+		printf("%04d %d %.3lf %.3lf\n", v[i].leastid, v[i].family.size(), (double)v[i].estatenum / v[i].family.size(), (double)v[i].estatearea / v[i].family.size());
+	}
+	cin >> n;
+	return 0;
+}

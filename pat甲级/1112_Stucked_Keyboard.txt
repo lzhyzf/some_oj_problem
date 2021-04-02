@@ -1,0 +1,49 @@
+#include <iostream>
+#include <string.h>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+int wrong[129];
+queue<int> a;
+
+int main()
+{
+	int k, num = 0, p = 0, q = 0;
+	char str[1001];
+	scanf("%d%s", &k, str);
+	int len = strlen(str);
+	while(q < len){
+		while(str[q] == str[p] && q < len)
+			q++;
+		if((q - p) % k == 0){
+			if(wrong[str[p]] == 0){
+				wrong[str[p]] = 1;
+				a.push(str[p]);
+			}
+		}
+		else wrong[str[p]] = 0;
+		p = q;
+	}
+	while(a.empty() != 1){
+		int b = a.front();
+		a.pop();
+		if(wrong[b] == 1)
+			printf("%c", b);
+	}
+	printf("\n");
+	for(int i = 0 ; i < len;){
+		printf("%c", str[i]);
+		if(wrong[str[i]] == 1)
+			i += k;
+		else i += 1;
+	}
+	cin >> k;
+	return 0;
+}

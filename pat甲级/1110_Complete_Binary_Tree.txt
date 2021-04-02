@@ -1,0 +1,60 @@
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+int maxn = -1, last = -1;
+
+struct node
+{
+	int left, right;
+}tree[21];
+
+int visited[21];
+
+void dfs(int index, int node){
+	if(index > maxn){
+		maxn = index;
+		last = node;
+	}
+	if(tree[node].left != -1)
+		dfs(2*index, tree[node].left);
+	if(tree[node].right != -1)
+		dfs(2*index + 1, tree[node].right);
+}
+
+int main()
+{
+	int n, root;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++){
+		string l, r;
+		cin >> l >> r;
+		if(l == "-")
+			tree[i].left = -1;
+		else{
+			tree[i].left = stoi(l);
+			visited[stoi(l)] = 1;
+		}
+		if(r == "-")
+			tree[i].right = -1;
+		else{
+			tree[i].right = stoi(r);
+			visited[stoi(r)] = 1;
+		}
+	}
+	for(int i = 0; i < n; i++)
+		if(visited[i] == 0) root = i;
+	dfs(1, root);
+	if(maxn == n)
+		printf("YES %d", last);
+	else printf("NO %d", root);
+	cin >> n;
+	return 0;
+}

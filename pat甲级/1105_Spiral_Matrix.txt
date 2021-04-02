@@ -1,0 +1,61 @@
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> v;
+
+int cmp(int a, int b)
+{
+	return  a > b;
+}
+
+int X[4] = {0, 1, 0, -1};
+int Y[4] = {1, 0, -1, 0};
+
+int main()
+{
+	int N, m, n;
+	scanf("%d", &N);
+	for(int i = sqrt(N); i >= 1; i--){//求行数列数
+		if(N % i == 0){
+			m = N / i;
+			n = i;
+			break;
+		}
+	}
+	v.resize(N + 1);
+	for(int i = 1; i <= N; i++)
+		scanf("%d", &v[i]);
+	sort(v.begin() + 1, v.end(), cmp);
+	vector<vector<int>> mar(m+1, vector<int>(n+1));
+	int x = 1, y = 0, dir = 0;
+	for(int i = 1; i <= N; ){
+		x += X[dir];
+		y += Y[dir];
+		if(y > n || x > m || y < 1 || mar[x][y] != 0){//如果向右，向下，向左出界，或者遇已经填充了的，就后退一步并转方向
+			x -= X[dir];
+			y -= Y[dir];
+			dir = (dir + 1) % 4;
+		}
+		else{
+			mar[x][y] = v[i];
+			i++;
+		}
+	}
+	for (int i = 1; i <= m; i++) {
+        for (int j = 1 ; j <= n; j++) {
+            printf("%d", mar[i][j]);
+            if (j != n) printf(" ");
+        }
+        printf("\n");
+    }
+	cin >> n;
+	return 0;
+}

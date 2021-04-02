@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> pre, post;
+int unique = 1, n, num = 0;
+
+struct Tnode
+{
+	Tnode *left, *right;
+	int data;
+};
+
+void BuildT(Tnode *&T, int prel, int prer, int postl, int postr)
+{
+	if(prel == prer)
+	{
+		T = (Tnode*)malloc(sizeof(struct Tnode));
+		T->left = T->right = NULL;
+		T->data = pre[prel];
+		return;
+	}
+	else{
+		if(T == NULL){
+			T = (Tnode*)malloc(sizeof(struct Tnode));
+			T->left = T->right = NULL;
+			T->data = pre[prel];
+		}
+		int i = postl;
+		while(post[i] != pre[prel + 1] && i <= postr) i++;
+			if(postr - i > 1){
+				BuildT(T->left, prel + 1, prel + i - postl + 1, postl, i);
+				BuildT(T->right, prel + i - postl + 2, prer, i + 1, postr - 1);
+			}
+			else{
+				unique = 0;
+				BuildT(T->right, prel + 1, prer, postl, i);
+			}
+	}
+}
+
+void intra(Tnode *T)
+{
+	if(T){
+		if(T->left)
+			intra(T->left);
+		printf("%d", T->data);
+		num++;
+		if(num != n) printf(" ");
+		if(T->right)
+			intra(T->right);
+	}
+}
+
+int main() {
+	scanf("%d", &n);
+	pre.resize(n);
+	post.resize(n);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &pre[i]);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &post[i]);
+	Tnode *T = NULL;
+	BuildT(T, 0, n-1, 0, n-1);
+	unique == 1 ? printf("Yes\n") : printf("No\n");
+	intra(T);
+    printf("\n");
+	cin >> n;
+    return 0;
+}

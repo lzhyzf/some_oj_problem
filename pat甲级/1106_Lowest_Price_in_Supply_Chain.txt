@@ -1,0 +1,55 @@
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+vector<vector<int> > tree;
+vector<int> visited;
+
+int minlevel = 100001, lnum = 0;
+
+void dfs(int level, int index)
+{
+	visited[index] = 1;
+	if(tree[index].size() == 0){
+		if(level < minlevel){
+			minlevel = level;
+			lnum = 1;
+		}
+		else if(level == minlevel)
+			lnum++;
+		return;
+	}
+	else{
+		for(int i = 0; i < tree[index].size(); i++)
+			if(visited[tree[index][i]] == 0) dfs(level + 1, tree[index][i]);
+	}
+
+}
+
+int main()
+{
+	int n;
+	double p, r;
+	scanf("%d %lf %lf", &n, &p, &r);
+	tree.resize(n);
+	visited.resize(n);
+	for(int i = 0; i < n; i++){//静态树
+		int num, tmp;
+		scanf("%d", &num);
+		for(int j = 0; j < num; j++){
+			scanf("%d", &tmp);
+			tree[i].push_back(tmp);
+		}
+	}
+	dfs(0, 0);
+	printf("%.4lf %d", p * pow(1 + r / 100, minlevel), lnum);
+	cin >> n;
+	return 0;
+}

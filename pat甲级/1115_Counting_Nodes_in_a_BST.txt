@@ -1,0 +1,58 @@
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+int levelnum[1001], lastlevel = -1;
+
+typedef struct Tnode
+{
+	Tnode *left, *right;
+	int data;
+}*BST;
+
+void InsertBST(BST &root, int x)
+{
+	if(root == NULL){
+		root = (BST)malloc(sizeof(struct Tnode));
+		root->data = x;
+		root->left = NULL;
+		root->right = NULL;
+	}
+	else{
+		if(root->data < x)
+			InsertBST(root->right, x);
+		else InsertBST(root->left, x);
+	}
+}
+
+void dfs(BST T, int level)
+{
+	if(T != NULL){
+		levelnum[level]++;
+		if(level > lastlevel) lastlevel = level;
+	}
+	if(T->left) dfs(T->left, level + 1);
+	if(T->right) dfs(T->right, level + 1);
+}
+
+int main()
+{
+	int n, x;
+	scanf("%d", &n);
+	BST T = NULL;
+	for(int i = 0; i < n; i++){
+		scanf("%d", &x);
+		InsertBST(T, x);
+	}
+	dfs(T, 0);
+	printf("%d + %d = %d", levelnum[lastlevel], levelnum[lastlevel - 1], levelnum[lastlevel] + levelnum[lastlevel - 1]);
+	cin >> n;
+	return 0;
+}

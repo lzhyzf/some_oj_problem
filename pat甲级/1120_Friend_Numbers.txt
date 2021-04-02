@@ -1,0 +1,28 @@
+#include <iostream>
+#include <vector>
+#include <set>
+
+using namespace std;
+
+int main() {
+	int n, temp, sum;
+	scanf("%d", &n);
+	set<int> s;
+	for(int i = 0; i < n; i++){
+		scanf("%d", &temp);
+		sum = 0;
+		while(temp){
+			sum = sum + temp % 10;
+			temp /= 10;
+		}
+		s.insert(sum);
+	}
+	int num = s.size();
+	printf("%d\n", num);
+	for(auto it = s.begin(); it != s.end(); it++){
+		if(it != s.begin()) printf(" ");
+		printf("%d", *it);
+	}
+	cin >> n;
+    return 0;
+}

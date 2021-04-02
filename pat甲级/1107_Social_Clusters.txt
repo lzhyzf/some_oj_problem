@@ -1,0 +1,65 @@
+#include <iostream>
+#include <map>
+#include <cmath>
+#include <queue>
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> v;
+vector<vector<int> > hob(1001);
+
+int findfather(int index)
+{//找到index结点的根结点
+	int root = index;
+	while(v[root] > 0)
+		root = v[root];
+	return root;
+}
+
+int cmp(int a, int b)
+{
+	return a < b;
+}
+
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	v.resize(n + 1);
+	for(int i = 1; i <= n; i++){
+		v[i] = -1;
+		int num, tmp;
+		scanf("%d:", &num);
+		for(int j = 0; j < num; j++){
+			scanf("%d", &tmp);
+			if(hob[tmp].size() == 0) hob[tmp].push_back(i);
+			else{
+				int fathera = findfather(hob[tmp][0]);
+				if(v[i] == -1){//如果这个结点还未插入任何集合，则插入
+					v[i] = fathera;
+					v[fathera]--;
+				}
+				else{//如何这个节点已经插入了集合，则将两个集合合并
+					int fatherb = findfather(i);
+					v[fathera] += v[fatherb];
+					v[fatherb] = fathera;
+				}
+			}
+		}
+	}
+	sort(v.begin(), v.end(), cmp);
+	int num = 0;
+	for(int i = 0; i < n + 1; i++)
+		if(v[i] < 0) num++;
+	printf("%d\n", num);
+	for(int i = 0; i < num; i++){
+		printf("%d", -v[i]);
+		if(i != num - 1) printf(" ");
+	}
+	cin >> n;
+	return 0;
+}
