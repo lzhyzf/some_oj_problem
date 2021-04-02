@@ -1,0 +1,182 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <vector>
+#include <map>
+#include <set>
+#include <stack>
+#include <string>
+#include <string.h>
+#include <algorithm>
+
+using namespace std;
+
+typedef struct TNode
+{
+	struct TNode * left, *right;
+	int data;
+}TNode, *Tree;
+
+Tree Insert(Tree T, int x)
+{//往二叉搜索树中插入x
+	if(!T){//找到插入位置
+		Tree newnode = (Tree)malloc(sizeof(TNode));
+		newnode->data = x;
+		newnode->left= newnode->right = NULL;
+		return newnode;
+	}
+	else if(T->data <= x)
+		T->right = Insert(T->right, x);
+	else T->left = Insert(T->left, x);
+	return T;
+}
+
+void pretravel(Tree T, vector<int> &m)
+{//把树按照前序扔进vector m中
+	if(T){
+		m.push_back(T->data);
+		pretravel(T->left, m);
+		pretravel(T->right, m);
+	}
+}
+
+bool ispre(Tree T, int a[], int n)
+{
+	vector<int> m;
+	pretravel(T, m);
+	for(int i = 0; i < n; i++)
+		if(a[i] != m[i]) return false;
+	return true;
+}
+
+void posttravel(Tree T, vector<int> &b)
+{
+	if(T){
+		posttravel(T->left, b);
+		posttravel(T->right, b);
+		b.push_back(T->data);
+	}
+}
+
+void Swap(Tree &T1, Tree &T2)
+{
+	Tree temp = T1;
+	T1 = T2;
+	T2 = temp;
+}
+
+void SwapT(Tree &T)
+{//交换树所有左右子树
+	if(T) {
+		Swap(T->left, T->right);
+		SwapT(T->left);
+		SwapT(T->right);
+	}
+}
+
+bool ispremirror(Tree &T, int a[], int n)
+{
+	SwapT(T);
+	return ispre(T, a, n);
+}
+
+int main()
+{
+	int n, temp;
+	while(cin >> n){
+		int a[1005];//用来保存输入的点
+		Tree T = NULL;
+		for(int i = 0; i < n; i++){//建立二叉搜索树
+			cin >> a[i];
+			T = Insert(T, a[i]);
+		}
+		vector<int> b;
+		if(ispre(T, a, n)){//如果是原本先序序列则打印后序序列
+			printf("YES\n");
+			posttravel(T, b);
+			for(int i = 0; i < n; i++){
+				printf("%d", b[i]);
+				if(i != n - 1) printf(" ");
+			}
+		}
+		else if(ispremirror(T, a, n)){//如果不是，再判断是否是镜像先序，是的话打印镜像后序，否则打印no
+			printf("YES\n");
+			posttravel(T, b);
+			for(int i = 0; i < n; i++){
+				printf("%d", b[i]);
+				if(i != n - 1) printf(" ");
+			}
+		}
+		else printf("NO\n");
+
+	}
+	return 0;
+}
+
+/*
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> post, pre;
+bool ismirro;
+
+void printpost()
+{
+	for(int i = 0; i < post.size(); i++){
+		if(i == 0) printf("%d", post[i]);
+		else printf(" %d", post[i]);
+	}
+}
+
+void getpost(int head, int tail)
+{
+	if(head > tail) return;
+	int i = head+1, j = tail;
+	if(!ismirro){
+		//找到第一个大于等于根的结点，用i保存
+		while(i <= tail && pre[head] > pre[i]) i++;
+		//找到第一个小于根的结点，用j保存
+		while(j > head && pre[head] <= pre[j]) j--;
+	}
+	else{
+		//找到第一个小于根的结点，用i保存
+		while(i <= tail && pre[i] >= pre[head]) i++;
+		//找到第一个大于等于根的结点，用j保存
+		while(j > head && pre[j] < pre[head]) j--;
+	}
+	if(i - j != 1) return;
+	getpost(head+1, i-1);
+	getpost(i, tail);
+	post.push_back(pre[head]);
+}
+
+int main()
+{
+	int n, temp;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++){
+		scanf("%d", &temp);
+		pre.push_back(temp);
+	}
+	getpost(0, n-1);
+	if(post.size() == n){
+		printf("YES\n");
+		printpost();
+	}
+	else{
+		ismirro = true;
+		post.clear();
+		getpost(0, n-1);
+		if(post.size() == n){
+			printf("YES\n");
+			printpost();
+		}
+		else printf("NO\n");
+	}
+	cin >> n;
+	return 0;
+}*/

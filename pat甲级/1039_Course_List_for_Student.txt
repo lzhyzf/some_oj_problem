@@ -1,0 +1,45 @@
+#include <cstdio>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+const int maxn = 26*26*26*10+10;
+
+int gethash(char *name)
+{//将名字转化为26*26*26*10+10的hash
+	int id = 0;
+	for(int i = 0; i < 3; i++)
+		id = id * 26 + *(name+i) - 'A';
+	id = id * 10 + *(name + 3) - '0';
+	return id;
+}
+
+vector<int> stu[maxn];
+
+int main()
+{
+	int n, k, indice, num, hash;
+	char name[5];
+
+	scanf("%d %d", &n, &k);
+	while(k--){
+		scanf("%d %d", &indice, &num);
+		while(num--){
+			scanf("%s", name);
+			hash = gethash(name);//将名字转化为hash
+			stu[hash].push_back(indice);
+		}
+	}
+
+	while(n--){
+		scanf("%s", name);
+		hash = gethash(name);
+		printf("%s %d", name, stu[hash].size());
+		sort(stu[hash].begin(),stu[hash].end());
+		for(int i = 0; i < stu[hash].size(); i++)
+			printf(" %d",stu[hash][i]);
+		printf("\n");
+	}
+	return 0;	
+}

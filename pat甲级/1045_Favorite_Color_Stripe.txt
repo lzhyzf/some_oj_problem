@@ -1,0 +1,41 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <cmath>
+#include <map>
+
+using namespace std;
+
+int order[300], dp[40000], chain[40000];
+
+int main()
+{
+	int n, m, l, temp, maxlength = 0;
+	scanf("%d", &n);
+	scanf("%d", &m);
+	for(int i = 1; i <= m; i++){
+		scanf("%d", &temp);
+		order[temp] = i;
+	}
+	scanf("%d", &l);
+	for(int i = 0; i < l; i++)
+		scanf("%d", &chain[i]);
+	for(int i = 0; i < l; i++){
+		if(order[chain[i]] == 0){//如果这个数不在给的次序中，则dp[i]是前面最大的
+			dp[i] = 0;
+		}
+		else{
+			dp[i] = 1;
+			for(int j = 0; j < i; j++){
+				if(order[chain[i]] >= order[chain[j]]){
+					if(dp[j] + 1 > dp[i]) dp[i] = dp[j] + 1;
+				}
+			}
+		}
+		if(dp[i] > maxlength) maxlength = dp[i];
+	}
+	printf("%d", maxlength);
+	scanf("%d", &n);
+	return 0;
+}

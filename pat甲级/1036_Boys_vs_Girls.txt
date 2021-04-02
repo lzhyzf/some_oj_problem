@@ -1,0 +1,59 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct stu
+{
+	string name, id;
+	int grade;
+}s;
+
+vector<stu> boy, girl;
+
+int cmp1(stu a, stu b)
+{
+	return a.grade > b.grade;
+}
+
+int cmp2(stu a, stu b)
+{
+	return a.grade < b.grade;
+}
+
+int main()
+{
+	int n, mnum = 0, fnum = 0;
+	cin >> n;
+	for(int i = 0; i < n; i++){
+		char gender;
+		cin >> s.name >> gender >> s.id >> s.grade;
+		if(gender == 'M'){
+			boy.push_back(s);
+			mnum++;
+		}
+		else{
+			girl.push_back(s);
+			fnum++;
+		}
+	}
+	if(fnum){
+		sort(girl.begin(), girl.end(), cmp1);
+		cout << girl[0].name << ' ' << girl[0].id << endl;
+	}
+	else printf("Absent\n");
+	if(mnum){
+		sort(boy.begin(), boy.end(), cmp2);
+		cout << boy[0].name << ' ' << boy[0].id << endl;
+	}
+	else printf("Absent\n");
+	if(fnum && mnum) printf("%d", girl[0].grade - boy[0].grade);
+	else printf("NA");
+	cin >> n;
+	return 0;
+}

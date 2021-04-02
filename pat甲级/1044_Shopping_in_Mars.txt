@@ -1,0 +1,91 @@
+/*#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{//简单模拟，有两个测试点超时
+	int n, m, min = 999999;
+	scanf("%d %d", &n, &m);
+	vector<int> v(n + 1);
+	pair<int, int> p;
+	vector<pair<int, int> > res;
+	for(int i = 1; i <= n; i++)
+		scanf("%d", &v[i]);
+	for(int i = 1; i <= n; i++){
+		int sum = 0;
+		for(int j = i; j <= n; j++){
+			sum += v[j];
+			if(sum >= m){
+				if(sum < min){
+					res.clear();
+					res.push_back(make_pair(i, j));
+					min = sum;
+				}
+				else if(sum == min) res.push_back(make_pair(i, j));
+				break;
+			}
+		}
+	}
+	for(int i = 0; i < res.size(); i++)
+		printf("%d-%d\n", res[i].first, res[i].second);
+	cin >> n;
+	return 0;
+}*/
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <algorithm>
+
+using namespace std;
+
+int n, m;
+vector<int> v(n + 1);
+
+void function(int i, int &j, int &sum)
+{//用来找j的位置（j是使i到j的和第一个大于m的位置）
+	int left = i, right = n;
+	while(left < right){
+		int middle = (left + right) / 2;
+		if(v[middle] - v[i-1] >= m)
+			right = middle;
+		else left = middle + 1;
+	}
+	j = right;
+	sum = v[j] - v[i-1];
+}
+
+int main()
+{
+	scanf("%d %d", &n, &m);
+	pair<int, int> p;
+	vector<pair<int, int> > res;
+	v.resize(n+1);
+	for(int i = 1; i <= n; i++){
+		scanf("%d", &v[i]);
+		v[i] += v[i-1];
+	}
+    int minans = v[n];
+	for(int i = 1; i <= n; i++){//外循环n次，代表每次首结点从i开始
+		//要找到能满足条件的最小的j
+		int j = i, sum = 0;
+		function(i, j, sum);
+		if(sum >= m){
+			if(sum < minans){
+				res.clear();
+				res.push_back(make_pair(i, j));
+				minans = sum;
+			}
+			else if(sum == minans) res.push_back(make_pair(i, j));
+		}
+	}
+	for(int i = 0; i < res.size(); i++)
+		printf("%d-%d\n", res[i].first, res[i].second);
+	cin >> n;
+	return 0;
+}

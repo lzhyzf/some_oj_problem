@@ -1,0 +1,30 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <map>
+#include <stack>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main()
+{
+	int n, now, left, rightdig = -1, ans = 0, temp, a;//now表示当前处理的位, left表示左边数字大小, rightdig表示右边共有几位
+	scanf("%d", &n);
+	temp = n;
+	while(n){//从右到左逐位处理,就考虑当前位能是1的情况并加到ans上
+		now = n % 10;
+		left = n / 10;
+		rightdig++;
+		a = pow(10, rightdig);
+		if(now == 0) ans += (a * left);//如果要n这个数在当前位是0，那么从1到n要在当前位是1，它左边的情况是0~left-1，右边的情况是0~999···
+		else if(now == 1) ans += (a * left + temp % a + 1);
+		else ans += a * (left + 1);
+		n /= 10;
+	}
+	printf("%d", ans);
+	cin >> n;
+	return 0;
+}
